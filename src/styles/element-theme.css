@@ -1,0 +1,195 @@
+/* ============================================================
+   Element Plus → Ant Design 5 主题映射
+   ------------------------------------------------------------
+   ⚠️ 本文件必须在 element-plus 的样式之后引入，才能覆盖其 :root 变量。
+   `.dark` 相关的覆盖使用 `html.dark` 提升优先级，
+   以压过 element-plus/theme-chalk/dark/css-vars.css 中的同名声明。
+   ============================================================ */
+
+:root {
+  /* --- 品牌主色（含 Element Plus 推导出的 light/dark 梯度） --- */
+  --el-color-primary: #1677ff;
+  --el-color-primary-light-3: #4096ff;
+  --el-color-primary-light-5: #91caff;
+  --el-color-primary-light-7: #bae0ff;
+  --el-color-primary-light-8: #d3e8ff;
+  --el-color-primary-light-9: #e6f4ff;
+  --el-color-primary-dark-2: #0958d9;
+
+  /* --- 功能色 --- */
+  --el-color-success: #52c41a;
+  --el-color-success-light-3: #86d65f;
+  --el-color-success-light-5: #a9e28d;
+  --el-color-success-light-7: #cbedba;
+  --el-color-success-light-8: #dcf3d1;
+  --el-color-success-light-9: #eef9e8;
+  --el-color-success-dark-2: #429d15;
+
+  --el-color-warning: #faad14;
+  --el-color-warning-light-3: #fcc65b;
+  --el-color-warning-light-5: #fdd68a;
+  --el-color-warning-light-7: #fee6b9;
+  --el-color-warning-light-8: #feefd0;
+  --el-color-warning-light-9: #fff7e8;
+  --el-color-warning-dark-2: #c88a10;
+
+  --el-color-danger: #ff4d4f;
+  --el-color-danger-light-3: #ff8284;
+  --el-color-danger-light-5: #ffa6a7;
+  --el-color-danger-light-7: #ffcaca;
+  --el-color-danger-light-8: #ffdbdc;
+  --el-color-danger-light-9: #ffeded;
+  --el-color-danger-dark-2: #cc3e3f;
+
+  --el-color-error: #ff4d4f;
+  --el-color-error-light-3: #ff8284;
+  --el-color-error-light-5: #ffa6a7;
+  --el-color-error-light-7: #ffcaca;
+  --el-color-error-light-8: #ffdbdc;
+  --el-color-error-light-9: #ffeded;
+  --el-color-error-dark-2: #cc3e3f;
+
+  --el-color-info: #1677ff;
+  --el-color-info-light-3: #4096ff;
+  --el-color-info-light-5: #91caff;
+  --el-color-info-light-7: #bae0ff;
+  --el-color-info-light-8: #d3e8ff;
+  --el-color-info-light-9: #e6f4ff;
+  --el-color-info-dark-2: #0958d9;
+
+  /* --- 文字 --- */
+  --el-text-color-primary: rgba(0, 0, 0, 0.88);
+  --el-text-color-regular: rgba(0, 0, 0, 0.65);
+  --el-text-color-secondary: rgba(0, 0, 0, 0.45);
+  --el-text-color-placeholder: rgba(0, 0, 0, 0.25);
+  --el-text-color-disabled: rgba(0, 0, 0, 0.25);
+
+  /* --- 背景 --- */
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #f5f5f5;
+  --el-bg-color-overlay: #ffffff;
+  --el-mask-color: rgba(255, 255, 255, 0.9);
+  --el-mask-color-extra-light: rgba(255, 255, 255, 0.3);
+
+  /* --- 描边 --- */
+  --el-border-color: #d9d9d9;
+  --el-border-color-light: #e5e5e5;
+  --el-border-color-lighter: #f0f0f0;
+  --el-border-color-extra-light: #f5f5f5;
+  --el-border-color-dark: #d9d9d9;
+  --el-border-color-darker: #bfbfbf;
+
+  /* --- 填充 --- */
+  --el-fill-color: rgba(0, 0, 0, 0.06);
+  --el-fill-color-light: rgba(0, 0, 0, 0.04);
+  --el-fill-color-lighter: rgba(0, 0, 0, 0.02);
+  --el-fill-color-extra-light: rgba(0, 0, 0, 0.02);
+  --el-fill-color-dark: rgba(0, 0, 0, 0.08);
+  --el-fill-color-darker: rgba(0, 0, 0, 0.12);
+  --el-fill-color-blank: #ffffff;
+
+  /* --- 圆角 --- */
+  --el-border-radius-base: 6px;
+  --el-border-radius-small: 4px;
+  --el-border-radius-round: 999px;
+
+  /* --- 控件尺寸（antd 的 sm/md/lg） --- */
+  --el-component-size-small: 24px;
+  --el-component-size: 32px;
+  --el-component-size-large: 40px;
+
+  /* --- 字体 --- */
+  --el-font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --el-font-size-base: 14px;
+
+  /* --- 阴影 --- */
+  --el-box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --el-box-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --el-box-shadow-lighter: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --el-box-shadow-dark: 0 6px 16px 0 rgba(0, 0, 0, 0.12), 0 3px 6px -4px rgba(0, 0, 0, 0.16);
+}
+
+/* 暗色下只覆盖需要跟随 antd 暗色令牌的部分，
+   其余梯度交给 element-plus 自带的 dark/css-vars.css */
+html.dark {
+  --el-color-primary: #1677ff;
+  --el-color-primary-light-3: #4096ff;
+  --el-color-primary-dark-2: #0958d9;
+
+  --el-text-color-primary: rgba(255, 255, 255, 0.85);
+  --el-text-color-regular: rgba(255, 255, 255, 0.65);
+  --el-text-color-secondary: rgba(255, 255, 255, 0.45);
+  --el-text-color-placeholder: rgba(255, 255, 255, 0.25);
+  --el-text-color-disabled: rgba(255, 255, 255, 0.25);
+
+  --el-bg-color: #141414;
+  --el-bg-color-page: #000000;
+  --el-bg-color-overlay: #1f1f1f;
+  --el-mask-color: rgba(0, 0, 0, 0.65);
+
+  --el-border-color: #424242;
+  --el-border-color-light: #3a3a3a;
+  --el-border-color-lighter: #303030;
+  --el-border-color-extra-light: #262626;
+  --el-border-color-dark: #4a4a4a;
+  --el-border-color-darker: #5a5a5a;
+
+  --el-fill-color: rgba(255, 255, 255, 0.12);
+  --el-fill-color-light: rgba(255, 255, 255, 0.08);
+  --el-fill-color-lighter: rgba(255, 255, 255, 0.04);
+  --el-fill-color-extra-light: rgba(255, 255, 255, 0.02);
+  --el-fill-color-dark: rgba(255, 255, 255, 0.16);
+  --el-fill-color-darker: rgba(255, 255, 255, 0.2);
+  --el-fill-color-blank: #141414;
+}
+
+/* ============================================================
+   细节微调：让 Element Plus 更贴近 antd 的观感
+   ============================================================ */
+
+/* 表格：antd 的表头是浅灰底、加粗文字，且没有竖向分隔线 */
+.el-table th.el-table__cell {
+  background-color: var(--el-fill-color-light) !important;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+.el-table td.el-table__cell,
+.el-table th.el-table__cell.is-leaf {
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+/* 卡片：统一圆角与描边，贴近 antd Card */
+.el-card {
+  --el-card-border-color: var(--el-border-color-lighter);
+  border-radius: 8px;
+}
+
+/* 按钮：antd 的字重与内边距更紧凑 */
+.el-button {
+  font-weight: 400;
+}
+
+.el-button--primary {
+  --el-button-hover-bg-color: #4096ff;
+  --el-button-hover-border-color: #4096ff;
+  --el-button-active-bg-color: #0958d9;
+  --el-button-active-border-color: #0958d9;
+}
+
+/* 输入框：焦点态用 antd 的主色描边 + 浅色外发光 */
+.el-input__wrapper.is-focus,
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1) !important;
+}
+
+/* 菜单：antd 风格的分组与选中态 */
+.el-menu {
+  border-right: none;
+  --el-menu-active-color: var(--el-color-primary);
+  --el-menu-hover-bg-color: var(--el-fill-color-light);
+}
