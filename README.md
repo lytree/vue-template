@@ -13,7 +13,7 @@
 | 路由 | `vue-router@5` |
 | 状态 | `pinia@4`（Setup Store 写法） |
 | UI 组件 | `element-plus@2.14` |
-| 样式 | `tailwindcss@4` + antd 设计令牌 |
+| 样式 | `@vanilla-extract/css` + `@vanilla-extract/sprinkles` + antd 设计令牌 |
 | 包管理 | `pnpm@11`（锁文件 `pnpm-lock.yaml`，`packageManager` 字段已固定） |
 
 ## 快速开始
@@ -64,32 +64,50 @@ src/
 │   │   └── navigation.tsx       #   导航组件
 │   └── exception/404.tsx        # 404
 ├── styles/
-│   ├── index.css                # antd 令牌 + Tailwind @theme + 基础层
+│   ├── utility.css.ts           # sprinkles 工具类 + 复合快捷类
+│   ├── tokens.css                # antd 设计令牌 + Element Plus 变量映射
 │   └── element-theme.css        # Element Plus → antd 主题映射
 └── types/router.d.ts            # RouteMeta 类型扩展
 ```
 
 ## 设计体系：一套令牌，两处消费
 
-所有颜色 / 圆角 / 阴影只在 `src/styles/index.css` 的 `:root` 里定义一次（`--ant-*` 变量），
+所有颜色 / 圆角 / 阴影只在 `src/styles/tokens.css` 的 `:root` 里定义一次（`--ant-*` 变量），
 然后分两条路径复用：
 
-1. **Tailwind 工具类**：通过 `@theme inline` 注册，可以直接写
-   `bg-primary`、`text-text-secondary`、`border-border-secondary`、`rounded-antd`、`shadow-antd`，
-   并且会跟随 `.dark` 自动切换。
+1. **vanilla-extract 工具类**：通过 `@vanilla-extract/sprinkles` 的 `defineSprinkles()`
+   注册到 `src/styles/utility.css.ts`，调用方式：
+
+   ```tsx
+   import { sprinkles } from '@/styles/utility.css'
+
+   // 静态使用 —— 编译时合并为单个 hash class
+   <div class={sprinkles({ display: 'flex', padding: '5', gap: '4' })} />
+
+   // 响应式 —— 不同断点用不同值
+   <div class={sprinkles({
+     display: { mobile: 'none', sm: 'block' },
+     gridTemplateColumns: { mobile: '1', sm: '2', xl: '4' },
+   })} />
+   ```
+
+   sprinkles 的所有值都走 antd 设计令牌（`var(--ant-color-*)`），dark mode 跟随 `.dark` 自动切换。
+   复杂语义类（`iconButton`、`appCard`、`trendBar` 等）和旧的 style()-式类名（`u.flex`、`u.p5`）
+   也一并从同一文件导出，老代码可继续沿用。
+
 2. **Element Plus**：在 `element-theme.css` 里把 `--el-*` 映射到同一批令牌，
    组件外观（主色 `#1677ff`、圆角 `6px`、控制高度 `32px`、灰阶文字、语义色）与 antd 保持一致。
 
 > 样式引入顺序在 `src/main.tsx` 中**不可调换**：
-> `element-plus/dist/index.css` → 暗色变量 → Tailwind/antd 令牌 → `element-theme.css`（覆盖必须最后）。
+> `element-plus/dist/index.css` → 暗色变量 → tokens.css → `element-theme.css`（覆盖必须最后）。
 
 暗色模式通过在 `<html>` 上切换 `.dark` 实现，由 `useAppStore().toggleDark()` 驱动，并持久化到 localStorage。
 
 ## 覆盖组件库样式的三层手段
 
-Element Plus 的样式**没有包在 `@layer` 里**（无层），而 Tailwind 的工具类在 `@layer utilities` 内。
-按 CSS 层叠层规范，**无层的普通声明优先级高于任何 `@layer` 内的普通声明**，
-所以给 EP 组件贴一个 Tailwind 类通常压不过它自带规则。正确的顺序是：
+vanilla-extract 工具类编译期会生成**无层的普通 CSS 声明**（不输出 `@layer`）。
+Element Plus 的样式同样没有包在 `@layer` 里，所以二者在层叠上完全平等。
+如果 EP 自带样式压过你的工具类（常见于内置的 `!important` 或组件 root 选择器），按以下顺序处理：
 
 1. **令牌重映射**（首选，覆盖约九成需求）：改 `--el-*` 变量，写在 `element-theme.css` 的 `:root`；
    暗色覆盖必须用 `html.dark`（比 EP 的 `html.dark` 声明更靠后，才能压住 `dark/css-vars.css`）。
@@ -98,8 +116,9 @@ Element Plus 的样式**没有包在 `@layer` 里**（无层），而 Tailwind �
    ```css
    .my-table .el-table__header th.el-table__cell { background: var(--ant-color-fill-quaternary); }
    ```
-3. **`!important` 逃生舱**：注意 Tailwind v4 的重要修饰符是**后缀** —— `class="bg-transparent!"`，
-   而不是 v3 的 `!bg-transparent`。全量模式为 `@import 'tailwindcss' important;`。
+3. **`!important` 逃生舱**：项目里直接用 `importantWFull / importantW72 / importantMr1 / importantMy5`
+   等 vanilla-extract 类（已带 `!important`），它们都从 `@/styles/utility.css` 导入。
+   用 `style({ width: '160px !important' })` 也能手写一个。
 
 ## JSX 编译器：`vue-jsx`（Oxc）
 
@@ -107,7 +126,8 @@ Element Plus 的样式**没有包在 `@layer` 里**（无层），而 Tailwind �
 它用 Rust 写的 Oxc 编译器替换 Babel，官方基准称编译速度约为 Babel 的 30–50 倍。
 
 - **本项目为纯虚拟 DOM 模式**：`vite.config.ts` 里显式设了 `vapor: false`，不产生任何 Vapor 输出。
-- Vite 接入：`import vueJsx from 'vue-jsx/vite'`，插件数组 `[vueJsx({...}), tailwindcss()]`。
+- Vite 接入：`import vueJsx from 'vue-jsx/vite'`，插件数组 `[vueJsx({...}), vanillaExtractPlugin()]`。
+  `vanillaExtractPlugin()` 把 `*.css.ts` 编译成静态 CSS 并按需注入到 import 该模块的位置。
   插件选项为 `vapor: false` / `optimize` / `mergeProps` / `sourceMap`，
   以及 **`hmr` 仅在 dev 打开**（`hmr: command === 'serve'`）——原因见下方易错点表。
 - 运行时它按需注入 `vue-jsx-vapor/vdom` 的 `normalizeSlot`、`createVNodeCache` 等辅助函数
