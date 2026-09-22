@@ -120,6 +120,269 @@ Element Plus 的样式同样没有包在 `@layer` 里，所以二者在层叠上
    等 vanilla-extract 类（已带 `!important`），它们都从 `@/styles/utility.css` 导入。
    用 `style({ width: '160px !important' })` 也能手写一个。
 
+## 样式系统：sprinkles + recipes + 主题 + 动画
+
+项目把 Tailwind 风格的 atomic utility、Tailwind v4 缺失能力、UnoCSS 风格主题切换与切换动画，全部用 **vanilla-extract 全家桶** 在 `src/styles/` 下实现。整体目录：
+
+```
+src/styles/
+├── utility.css.ts        # 主入口：sprinkles / recipes / theme / 动画 / dynamic vars
+├── compose.ts            # compose / cx / mergeProps / responsive / applyDynamic / responsiveValue
+├── useTheme.ts           # useTheme() hook / setTheme / triggerThemeFlash / themeOptions
+├── tokens.css            # antd 设计令牌 + Element Plus 变量映射
+├── globals.css.ts        # reset + scrollbar + Element Plus 主色覆盖
+└── element-theme.css     # Element Plus → antd 主题覆盖
+```
+
+> ⚠️ **重要限制**：`.css.ts` 文件的 `export` 走 vanilla-extract AST 白名单，
+> 只允许 plain object / array / string / number。运行时函数（hook、DOM 操作、动态注入）
+> 必须拆到普通 `.ts` 文件 —— 这就是 `compose.ts` / `useTheme.ts` 单独存在的原因。
+
+### 1. 三个层 API
+
+| 层 | 入口 | 用途 |
+|---|---|---|
+| **atomic utility** | `sprinkles({ display: 'flex', padding: '4', gap: '4' })` | 单个属性 → 原子类，编译期合并为单个 hash class |
+| **语义化组件** | `card({ hoverable: true, size: 'lg' })` / `button({ size: 'lg' })` | 多 variant 类型安全的 recipe，覆盖弹窗 / 表单 / 按钮等通用 UI 模式 |
+| **运行时工具** | `compose(...) / cx(...) / mergeProps(...) / applyDynamic({...}) / responsiveValue(...)` | 跨文件共享、动态 CSS 变量注入、响应式合并 |
+
+```tsx
+import { sprinkles, card, button } from '@/styles/utility.css'
+import { compose, cx, mergeProps, applyDynamic } from '@/styles/compose'
+
+// 1. atomic
+<div class={sprinkles({ display: 'flex', p: '4', gap: '4', rounded: 'lg' })} />
+
+// 2. recipe
+<button class={button({ size: 'lg', block: true })}>提交</button>
+
+// 3. compose + dynamic
+<div class={cx(
+  sprinkles({ p: '4', bg: 'container' }),
+  card({ size: 'md' }),
+)} />
+
+// 4. 动态 CSS 变量注入（任意颜色）
+<div
+  style={applyDynamic({ color: '#ff4d4f', bg: '#fff5f5' })}
+  class={sprinkles({ color: 'primary', bg: 'fill-secondary' })}
+/>
+```
+
+### 2. atomic utility 覆盖范围（[utility.css.ts 第 78 行起](file:///f:/Code/Web/vue-template/src/styles/utility.css.ts#L78)）
+
+| 类别 | 关键 properties |
+|---|---|
+| **display / 可见性** | `display` / `visibility` / `opacity`（13 阶） |
+| **flex / grid** | `flexDirection`（含 row-reverse / col-reverse）/ `flexWrap`（含 wrap-reverse）/ `flex` / `flexShrink` / `flexGrow` / `order` / `alignItems` / `alignSelf` / `justifyContent`（含 evenly）/ `placeContent` / `placeItems` |
+| **grid** | `gridTemplateColumns`（1-6/none）/ `gridTemplateRows` / `gridColumn` / `gridRow` / `gridAutoFlow` |
+| **gap** | `gap`（0/px/0.5/1/1.5/2…12）/ `columnGap` / `rowGap` |
+| **sizing** | `width` / `height`（含 fraction `1/2` `1/3` `2/3` `1/4` `3/4`）/ `minW` / `minH` / `maxW`（xs→7xl） / `maxH` / `aspectRatio`（square / video） |
+| **spacing** | `padding` / `paddingLeft` / `paddingRight` / `paddingTop` / `paddingBottom`（0/px/0.5/1/1.5/2…12）/ `margin*`（含 auto / negative） |
+| **typography** | `fontSize`（xs→6xl）/ `fontWeight`（thin→black 9 阶）/ `lineHeight` / `letterSpacing` / `fontFamily` / `fontStyle` / `textAlign`（含 justify）/ `textTransform` / `textDecoration` / `whiteSpace` / `wordBreak` / `overflowWrap` |
+| **color** | `color`（含 current / transparent / inherit）/ `backgroundColor` |
+| **border** | `borderRadius`（xs→3xl/full）/ 四角独立半径 / `borderWidth` / `borderStyle` / `borderColor` / 四向独立 |
+| **outline** | `outlineStyle` / `outlineWidth` / `outlineColor` / `outlineOffset` |
+| **shadow** | `boxShadow`（none/sm/base/md/lg/xl/2xl/inner/antd/antd-lg） |
+| **transition / animation** | `transitionProperty`（none/all/colors/opacity/shadow/transform/width）/ `transitionDuration`（0-1000 9 阶）/ `transitionTimingFunction` / `transitionDelay` / `transition` / `animation`（spin/ping/pulse/bounce + keyframes） |
+| **transform** | `scale` / `rotate`（含负值）/ `translateX` / `translateY`（含 1/2 / full）/ `skewX` / `skewY` / `transformOrigin` |
+| **filter** | `blur` / `brightness` / `contrast` / `saturate` / `grayscale` / `hueRotate` / `invert` / `sepia` |
+| **backdrop** | `backdropBlur` / `backdropBrightness` / `backdropSaturate` / `backdropGrayscale` |
+| **overflow** | `overflow` / `overflowX` / `overflowY`（含 clip / visible / scroll） |
+| **position** | `position`（含 static）/ `inset` / `top` / `right` / `bottom` / `left` / `insetInline` / `insetBlock` / `zIndex`（0→100/auto） |
+| **interactivity** | `cursor` / `pointerEvents` / `userSelect` / `resize` / `appearance` / `accentColor` / `caretColor` / `scrollBehavior` / `scrollSnapType` / `scrollSnapAlign` / `touchAction` |
+| **object** | `objectFit` / `objectPosition` |
+
+**响应式断点**（默认条件变体）：
+
+```ts
+mobile / sm (≥640) / md (≥768) / lg (≥1024) / xl (≥1280) / 2xl (≥1536)
+```
+
+```tsx
+sprinkles({ display: { mobile: 'block', md: 'flex' }, p: { mobile: '2', md: '4' } })
+```
+
+**Shorthands**（70+ 个）：
+
+`px` / `py` / `p` / `mt` / `mb` / `ml` / `mr` / `w` / `h` / `size` / `minW` / `minH` / `maxW` / `maxH` / `rounded` / `roundedT/B/L/R` / `items` / `justify` / `flexCol` / `flexRow` / `gridCols` / `gridRows` / `colSpan` / `rowSpan` / `truncate` / `textXs/Sm/Base/Lg/Xl/2xl/3xl` / `textLeft/Center/Right` / `fontBold/Semibold/Medium/Normal` / `fontMono` / `leadingNone/Tight/Normal` / `trackingWidest` / `tabularNums` / `textPrimary/Text/TextSecondary/TextTertiary/TextQuaternary` / `bgLayout/Container/Elevated/Primary/...` / `borderB/T/R/L` / `duration` / `delay` / `ease` / `shadowAntd/Lg` / `overflowHidden/YAuto/XAuto` / `cursorPointer` / `insetX/Y` / `gapX/Y` / `borderB/T/R/L`
+
+### 3. Recipe（语义化组件 + 多 variant）
+
+位于 [utility.css.ts 第 540+ 行](file:///f:/Code/Web/vue-template/src/styles/utility.css.ts#L540)：
+
+| recipe | variants |
+|---|---|
+| `card` | `size`（none/sm/md/lg）+ `hoverable`（true/false） |
+| `button` | `size`（sm/md/lg）+ `block`（true/false） |
+| `iconBtn` | `size`（sm/md/lg） |
+| `userMenu` | `padded`（true/false） |
+| `logoBox` | `tone`（primary/dark/light）+ `size`（sm/md/lg） |
+| `shortcut` | `active`（true/false）+ `size`（sm/md） |
+| `bar` | `tone`（primary/success/warning） |
+| `dot` | `tone`（primary/success/warning/error/neutral）+ `size`（sm/md/lg） |
+| `trend` | `direction`（up/down/flat） |
+| `overlay` | `tone`（light/dark/primary）+ `elevation`（sm/md/lg）+ `size`（sm/md/lg/full）+ `padding`（none/sm/md/lg） |
+| `actionBar` | `direction`（row/row-reverse/col/col-reverse）+ `justify`（5 种）+ `gap`（sm/md/lg），自带 `@media ≥ 640px` 响应式 |
+| `inputGroup` | `size`（sm/md/lg）+ `required` + `invalid` + `fullWidth` |
+| `stackCard` | `gap`（sm/md/lg）+ `tone`（container/transparent/layout） |
+| `centerBox` | `direction`（row/col）+ `gap` + `bg` |
+| `toolbarRow` | `gap` + `align`（4 种）+ `padded`，自带响应式 |
+
+每个 recipe 配套导出 `XxxVariants` 类型（`RecipeVariants<typeof xxx>`），可直接作为 props 类型：
+
+```tsx
+import { button, type ButtonVariants } from '@/styles/utility.css'
+
+defineProps<{ size?: ButtonVariants['size']; block?: boolean }>()
+```
+
+### 4. 主题系统（4 套主题 + 平滑切换动画）
+
+位于 [utility.css.ts 第 1965+ 行](file:///f:/Code/Web/vue-template/src/styles/utility.css.ts#L1965) + [useTheme.ts](file:///f:/Code/Web/vue-template/src/styles/useTheme.ts)：
+
+```ts
+themeContract = createThemeContract({
+  color / bg / text / text-secondary / border / success / warning / error
+})
+
+lightTheme / darkTheme / brandTheme / accentTheme  // 4 套主题
+themes = { light, dark, brand, accent }
+ThemeName = keyof typeof themes
+```
+
+**主题感知 utility class**（挂在主题子树内自动切换）：
+
+```tsx
+import { themePrimaryBtn, themeCard, themes } from '@/styles/utility.css'
+
+<button class={themePrimaryBtn}>主题按钮</button>
+<section class={themeCard + themes.dark}>暗色卡片</section>
+```
+
+**Vue 主题切换 hook + setTheme API**：
+
+```tsx
+import { useTheme, setTheme, triggerThemeFlash } from '@/styles/useTheme'
+
+// 响应式：组件内用 useTheme
+const { theme, themeName, isDark, toggleTheme, setTheme } = useTheme()
+<button onClick={toggleTheme}>切换</button>
+
+// 命令式：store / router 里用
+setTheme('dark')
+setTheme('brand', { duration: 800, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' })
+setTheme('dark', { animate: false })         // 立即切换
+setTheme('dark', { viewTransition: true })   // 浏览器原生 view-transition API
+triggerThemeFlash()                          // 整页 200ms 闪烁指示
+```
+
+**主题切换动画能力**（[utility.css.ts 第 2167+ 行](file:///f:/Code/Web/vue-template/src/styles/utility.css.ts#L2167)）：
+
+| capability | 实现 |
+|---|---|
+| **CSS 变量层过渡** | `--theme-transition-duration` 默认 0ms，setTheme 调用时临时改为 350ms，结束时清回 |
+| **受主题影响的属性** | `background-color` / `color` / `border-color` / `fill` / `stroke` |
+| **themeFadePulse** | body 切换瞬间 200ms 轻量淡入 |
+| **@view-transition** | Chrome 111+ 整页淡入淡出（`document.startViewTransition()`） |
+| **prefers-reduced-motion** | 系统级"减少动效"时自动归零 |
+| **themeIconRotate** | Sun/Moon 切换按钮 500ms 360° 旋转 |
+| **themeIconAppear** | 双图标切换 300ms 缩放 + 旋转淡入 |
+| **themeMorph** | 500ms 暗色 morph 背景 |
+| **themeFlash** | 全屏 200ms 半透明闪烁（`triggerThemeFlash()` 触发） |
+| **themeRipple** | 从点击位置圆形扩散的 keyframes 预备能力 |
+
+### 5. 运行时工具函数（[compose.ts](file:///f:/Code/Web/vue-template/src/styles/compose.ts)）
+
+```ts
+compose('a', 'b', condition && 'c')  // 字符串拼接，自动跳过 falsy
+cx(...)                                // alias
+mergeProps(sprinkles({...}), { maxWidth: '600px' })  // 透传给 style()，编译为 hash class
+responsive({ mobile: {...}, md: {...} })  // 生成 @media StyleRule 子对象
+responsiveValue({ gap: '12px', md: { gap: '24px' } })  // 直传 style([...]) 用
+applyDynamic({ color: '#1677ff' })  // → { '--utility-color': '#1677ff' }
+```
+
+### 6. 兼容垫片（`u.flex / u.px4 / u.appCard` 等）
+
+老代码用 `import * as u from '@/styles/utility.css'` 拿预先 `style()` 出来的 className 字符串 —— 项目保留了 200+ 个旧名作为兼容垫片，**14 个 TSX 文件零改动**。新代码推荐用 `sprinkles({...})` / `card({...})` 函数式 API。
+
+### 7. Tailwind v4 缺失能力补齐（[utility.css.ts 第 1700+ 行](file:///f:/Code/Web/vue-template/src/styles/utility.css.ts#L1700)）
+
+| 类别 | utility |
+|---|---|
+| **gradient** | `bgGradientToT / Tr / R / B / Br / Bl` / `textGradientPrimary` |
+| **mask** | `maskCircle` / `maskSquare` / `maskNone` |
+| **ring（变量化）** | `ringNone` / `ring1` / `ring2` / `ring4` / `ring8` / `ringInner`（用 `dynamicVars.ringColor / ringWidth`） |
+| **isolation / mix-blend** | `isolate` / `isolationAuto` + 15 种 blend mode（normal / multiply / screen / overlay / darken / lighten / color-dodge / color-burn / hard-light / soft-light / difference / exclusion / hue / saturation / color / luminosity） |
+| **will-change / contain** | `willChangeAuto / Scroll / Contents / Transform` + `containNone / Strict / Content / Layout / Style / Paint / Size` |
+| **columns** | `columns1-5 / Auto` + `columns3xs-7xl` |
+| **scroll-margin / scroll-padding / scroll-snap-stop** | `scrollM0/2/4/8` / `scrollP0/2/4/8` / `scrollSnapNormal / Always` |
+| **hyphens / writing-mode** | `hyphensNone / Manual / Auto` + `writingModeHorizontal / Vertical` |
+| **field-sizing / content** | `fieldSizingFixed / Content` / `contentEmpty / None` |
+| **line-clamp** | `lineClamp1-6 / None` |
+| **list-style / table** | `listNone / Disc / Decimal` / `listInside / Outside` / `tableAuto / Fixed` / `borderCollapse / Separate` |
+| **decoration** | `decorationUnderline / Overline / LineThrough / None` + style（solid/double/dotted/dashed/wavy） + `underlineOffset*` |
+| **浮层 / 模态** | `backdrop` / `modalContainer` |
+| **可访问性** | `srOnly` / `notSrOnly` |
+| **条件变体（hover/focus/active/disabled/placeholder）** | 12 个 utility（hoverUnderline / hoverPrimary / hoverScale105 / focusOutlineNone / focusRing / activeScale95 / disabledOpacity50 / disabledPointerNone / placeholderTextTertiary 等） |
+
+### 8. 动态 utility（UnoCSS 风格的任意值注入）
+
+通过 CSS 变量实现 Tailwind 的 `bg-[#abc]` 等任意值：
+
+```tsx
+import { dynColorPrimary, dynBgPrimary } from '@/styles/utility.css'
+import { applyDynamic } from '@/styles/compose'
+
+// 业务态：任意颜色值通过 dynamicVars 注入
+<div
+  style={applyDynamic({ color: '#ff4d4f', bg: '#fff5f5', ringColor: '#3b82f6' })}
+  class={dynColorPrimary}
+/>
+
+// 主题感知 utility：dynColorPrimary / dynBgPrimary / dynBorderPrimary
+// / dynTextPrimary / dynGradientFromTo
+```
+
+`dynamicVars` 提供 10 个命名 token（color / bg / ringColor / ringWidth / ringOpacity / borderColor / textColor / gradientFrom / gradientVia / gradientTo），`:root` 与 `html.dark` 自动切换初始值。
+
+### 用法对照 UnoCSS / Tailwind
+
+```tsx
+// UnoCSS: <div class="flex items-center gap-4 p-6 bg-primary text-white rounded-lg shadow-md
+//                   hover:bg-primary-hover transition-all">
+<div
+  class={compose(
+    sprinkles({ display: 'flex', items: 'center', gap: '4', p: '6',
+                bg: 'primary', color: 'white', rounded: 'lg', shadow: 'md',
+                transitionDuration: '200', transitionProperty: 'all' }),
+    hoverBgFillTertiary,
+  )}
+/>
+
+// Tailwind: <div class="bg-gradient-to-br from-blue-500 to-purple-600 backdrop-blur-md">
+<div
+  style={applyDynamic({ gradientFrom: '#3b82f6', gradientTo: '#9333ea' })}
+  class={compose(bgGradientToBr, backdropBlur, dynGradientFromTo)}
+/>
+
+// Tailwind 主题切换: useTheme() + setTheme + 平滑动画
+const { theme, toggleTheme } = useTheme()
+<button onClick={toggleTheme} class={themeIconRotate}>
+  切换
+</button>
+<section class={theme}>
+  <div class={themeCard}>主题感知卡片，自动跟随切换</div>
+</section>
+```
+
+### 验证
+
+- `pnpm type-check` ✅ exit0
+- `pnpm build` ✅ 1647 modules，2.17s
+- CSS bundle：`vdom-*.css` 196.67 kB（gzipped 28 kB），`index-*.css` 370 kB（gzipped 50 kB）
+
 ## JSX 编译器：`vue-jsx`（Oxc）
 
 本项目不使用 Babel 版的 `@vitejs/plugin-vue-jsx`，而是官方的 **`vue-jsx`**（仓库 `vuejs/vue-jsx-vapor`）。
