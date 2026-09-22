@@ -18,6 +18,8 @@ import {
 
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
+import * as u from '@/styles/utility.css'
+import * as s from './feedback.css'
 
 export default defineComponent({
   name: 'ComponentsFeedbackPage',
@@ -31,7 +33,6 @@ export default defineComponent({
       ElMessage.success('已确认删除')
     }
 
-    /** 全屏 loading：service 返回实例，调用 close() 关闭 */
     function showFullLoading() {
       const instance = ElLoading.service({
         lock: true,
@@ -41,7 +42,6 @@ export default defineComponent({
       window.setTimeout(() => instance.close(), 1200)
     }
 
-    /** 局部 loading：target 传容器元素，配合 ref 使用 */
     function showBoxLoading() {
       if (!loadingBox.value) return
       const instance = ElLoading.service({ target: loadingBox.value, text: '加载中…' })
@@ -55,13 +55,13 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               <DemoBlock
                 title="ElAlert"
                 desc="警告提示；type 决定语义色，description 属性或默认插槽放详细说明。"
                 block
               >
-                <div class="flex flex-col gap-3">
+                <div class={s.alertStack}>
                   <ElAlert title="默认提示" type="info" showIcon />
                   <ElAlert title="成功提示" type="success" showIcon />
                   <ElAlert title="警告提示" type="warning" showIcon />
@@ -74,8 +74,10 @@ export default defineComponent({
                   />
                   <ElAlert type="success" showIcon>
                     {{
-                      title: () => <span class="font-medium">title 具名插槽</span>,
-                      default: () => <div class="text-sm">默认插槽作为描述内容，可放任意节点。</div>,
+                      title: () => <span class={u.fontMedium}>title 具名插槽</span>,
+                      default: () => (
+                        <div class={u.textSm}>默认插槽作为描述内容，可放任意节点。</div>
+                      ),
                     }}
                   </ElAlert>
                   <ElAlert title="可关闭" type="info" closable showIcon />
@@ -196,23 +198,21 @@ export default defineComponent({
                 desc="ElLoading.service(options) 返回实例，close() 关闭；target 指定容器即局部加载。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-3">
+                <div class={`${u.flex} ${u.flexWrap} ${u.itemsCenter} ${u.gap3}`}>
                   <ElButton type="primary" onClick={showFullLoading}>
                     全屏 Loading
                   </ElButton>
                   <ElButton onClick={showBoxLoading}>局部 Loading</ElButton>
                 </div>
-                <div
-                  ref={loadingBox}
-                  class="mt-4 flex h-24 items-center justify-center rounded-antd border border-border-secondary text-sm text-text-tertiary"
-                >
+                <div ref={loadingBox} class={s.loadingBoxStyle}>
                   target 指向这个容器
                 </div>
-                <p class="mt-3 text-sm text-text-tertiary">
+                <p class={s.noteText}>
                   注意：main.tsx 只注册了 pinia 与 router，没有 app.use(ElementPlus)，
                   所以模板里的 v-loading 指令不可用，只能用 ElLoading.service。
-                  要启用指令需自行注册：<code>app.use(ElLoading)</code> 或
-                  <code> app.directive('loading', ElLoading.directive)</code>。
+                  要启用指令需自行注册：
+                  <code class={s.noteCode}>app.use(ElLoading)</code> 或
+                  <code class={s.noteCode}>app.directive('loading', ElLoading.directive)</code>。
                 </p>
               </DemoBlock>
 
@@ -231,12 +231,12 @@ export default defineComponent({
                 >
                   {{
                     default: () => (
-                      <div class="text-sm text-text-secondary">
+                      <div class={s.textSmSecondary}>
                         正文走默认插槽。modelValue 控制显隐，关闭时通过 onUpdate:modelValue 回写。
                       </div>
                     ),
                     footer: () => (
-                      <div class="flex justify-end gap-2">
+                      <div class={s.dialogFooter}>
                         <ElButton onClick={() => (dialogVisible.value = false)}>取消</ElButton>
                         <ElButton type="primary" onClick={() => (dialogVisible.value = false)}>
                           确定
@@ -260,12 +260,12 @@ export default defineComponent({
                 >
                   {{
                     default: () => (
-                      <div class="text-sm text-text-secondary">
+                      <div class={s.textSmSecondary}>
                         抽屉内容。direction 可选 ltr / rtl / ttb / btt。
                       </div>
                     ),
                     footer: () => (
-                      <div class="flex justify-end gap-2">
+                      <div class={s.dialogFooter}>
                         <ElButton onClick={() => (drawerVisible.value = false)}>关闭</ElButton>
                         <ElButton type="primary" onClick={() => (drawerVisible.value = false)}>
                           保存
@@ -305,7 +305,7 @@ export default defineComponent({
                   {{
                     reference: () => <ElButton>点击弹出</ElButton>,
                     default: () => (
-                      <div class="text-sm">
+                      <div class={s.popoverText}>
                         默认插槽作为浮层内容，可以放<b>富文本</b>或任意组件。
                       </div>
                     ),
@@ -342,20 +342,14 @@ export default defineComponent({
                 desc="分步引导；modelValue 控制显隐，每个 ElTourStep 用 target 指定锚点选择器。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-3">
+                <div class={s.tourAnchors}>
                   <ElButton type="primary" onClick={() => (tourOpen.value = true)}>
                     开始引导
                   </ElButton>
-                  <div
-                    id="tour-anchor-1"
-                    class="rounded-antd border border-dashed border-border px-4 py-2 text-sm"
-                  >
+                  <div id="tour-anchor-1" class={s.tourAnchor}>
                     锚点 1
                   </div>
-                  <div
-                    id="tour-anchor-2"
-                    class="rounded-antd border border-dashed border-border px-4 py-2 text-sm"
-                  >
+                  <div id="tour-anchor-2" class={s.tourAnchor}>
                     锚点 2
                   </div>
                 </div>
@@ -383,7 +377,7 @@ export default defineComponent({
                 desc="结果页；icon 可选 success / warning / info / error，extra 插槽放操作区。"
                 block
               >
-                <div class="flex flex-wrap gap-4">
+                <div class={s.resultRow}>
                   <ElResult icon="success" title="操作成功" subTitle="数据已提交">
                     {{
                       extra: () => <ElButton type="primary">返回列表</ElButton>,

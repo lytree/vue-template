@@ -1,12 +1,11 @@
 import { defineComponent, h } from 'vue'
 import {
-  ElAffix,
-  ElAside,
   ElButton,
   ElButtonGroup,
   ElCol,
   ElConfigProvider,
   ElContainer,
+  ElAside,
   ElDivider,
   ElFooter,
   ElHeader,
@@ -25,8 +24,8 @@ import { Delete, Edit, Plus, Search, Star } from '@element-plus/icons-vue'
 
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
-
-const CELL = 'flex h-12 items-center justify-center rounded-antd bg-fill-tertiary text-sm'
+import * as u from '@/styles/utility.css'
+import * as s from './basic.css'
 
 export default defineComponent({
   name: 'ComponentsBasicPage',
@@ -38,7 +37,7 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               <DemoBlock
                 title="ElButton"
                 desc="type 控制语义色，size 控制尺寸，plain / round / link / text 控制形态。"
@@ -90,7 +89,7 @@ export default defineComponent({
                 <ElIcon size={24} color="#1677ff">
                   <Star />
                 </ElIcon>
-                <ElIcon size={24} class="text-error">
+                <ElIcon size={24} class={u.textError}>
                   <Delete />
                 </ElIcon>
               </DemoBlock>
@@ -100,7 +99,7 @@ export default defineComponent({
                 desc="图标变量统一用 h(icon) 渲染，避免在 JSX 里直接写 <Icon /> 带来的类型问题。"
               >
                 {[Plus, Search, Star].map((icon, index) => (
-                  <ElIcon key={index} size={22} class="text-primary">
+                  <ElIcon key={index} size={22} class={u.textPrimary}>
                     {h(icon)}
                   </ElIcon>
                 ))}
@@ -122,7 +121,10 @@ export default defineComponent({
                 </ElLink>
               </DemoBlock>
 
-              <DemoBlock title="ElText" desc="带语义色与字号的文本，bold / truncated 等布尔属性直接写裸属性。">
+              <DemoBlock
+                title="ElText"
+                desc="带语义色与字号的文本，bold / truncated 等布尔属性直接写裸属性。"
+              >
                 <ElText>默认文本</ElText>
                 <ElText type="primary">主要</ElText>
                 <ElText type="success">成功</ElText>
@@ -135,36 +137,36 @@ export default defineComponent({
                   加粗
                 </ElText>
                 <ElText truncated style={{ width: '150px' }}>
-                  这段超长文本会被截断并显示省略号
+                  <span class={s.truncatedText}>这段超长文本会被截断并显示省略号</span>
                 </ElText>
               </DemoBlock>
 
               <DemoBlock title="ElRow / ElCol" desc="24 栅格布局，gutter 控制列间距。" block>
                 <ElRow gutter={12}>
                   <ElCol span={24}>
-                    <div class={CELL}>span=24</div>
+                    <div class={s.cellDemo}>span=24</div>
                   </ElCol>
                 </ElRow>
-                <ElRow gutter={12} class="mt-3">
+                <ElRow gutter={12} class={u.mt3}>
                   <ElCol span={12}>
-                    <div class={CELL}>span=12</div>
+                    <div class={s.cellDemo}>span=12</div>
                   </ElCol>
                   <ElCol span={12}>
-                    <div class={CELL}>span=12</div>
+                    <div class={s.cellDemo}>span=12</div>
                   </ElCol>
                 </ElRow>
-                <ElRow gutter={12} class="mt-3">
+                <ElRow gutter={12} class={u.mt3}>
                   <ElCol span={6}>
-                    <div class={CELL}>6</div>
+                    <div class={s.cellDemo}>6</div>
                   </ElCol>
                   <ElCol span={6}>
-                    <div class={CELL}>6</div>
+                    <div class={s.cellDemo}>6</div>
                   </ElCol>
                   <ElCol span={6}>
-                    <div class={CELL}>6</div>
+                    <div class={s.cellDemo}>6</div>
                   </ElCol>
                   <ElCol span={6}>
-                    <div class={CELL}>6</div>
+                    <div class={s.cellDemo}>6</div>
                   </ElCol>
                 </ElRow>
               </DemoBlock>
@@ -174,19 +176,15 @@ export default defineComponent({
                 desc="ElContainer / ElHeader / ElAside / ElMain / ElFooter 会根据子组件自动推断排列方向。"
                 block
               >
-                <ElContainer class="h-44 overflow-hidden rounded-antd border border-border-secondary">
-                  <ElHeader class="bg-fill-tertiary text-center text-sm leading-[60px]">
-                    ElHeader
-                  </ElHeader>
+                <ElContainer class={s.containerBox}>
+                  <ElHeader class={s.containerHeader}>ElHeader</ElHeader>
                   <ElContainer>
-                    <ElAside width="120px" class="bg-fill-secondary text-center text-sm leading-[116px]">
+                    <ElAside width="120px" class={s.containerAside}>
                       ElAside
                     </ElAside>
-                    <ElMain class="text-center text-sm">ElMain</ElMain>
+                    <ElMain class={s.containerMain}>ElMain</ElMain>
                   </ElContainer>
-                  <ElFooter class="bg-fill-tertiary text-center text-sm leading-[60px]">
-                    ElFooter
-                  </ElFooter>
+                  <ElFooter class={s.containerFooter}>ElFooter</ElFooter>
                 </ElContainer>
               </DemoBlock>
 
@@ -197,23 +195,23 @@ export default defineComponent({
                   <ElButton plain>按钮 C</ElButton>
                 </ElSpace>
                 <ElSpace direction="vertical" size={8} alignment="flex-start">
-                  <div class={CELL + ' w-40'}>垂直 1</div>
-                  <div class={CELL + ' w-40'}>垂直 2</div>
+                  <div class={s.cellDemo40}>垂直 1</div>
+                  <div class={s.cellDemo40}>垂直 2</div>
                 </ElSpace>
               </DemoBlock>
 
               <DemoBlock title="ElDivider" desc="水平 / 垂直分割线，水平模式可带文字内容。" block>
-                <div class="flex items-center gap-3 text-sm">
+                <div class={s.dividerRow}>
                   <span>左侧</span>
                   <ElDivider direction="vertical" />
                   <span>中间</span>
                   <ElDivider direction="vertical" />
                   <span>右侧</span>
                 </div>
-                <ElDivider class="!my-5" contentPosition="left">
+                <ElDivider class={u.importantMy5} contentPosition="left">
                   分组标题
                 </ElDivider>
-                <ElDivider class="!my-5">居中标题</ElDivider>
+                <ElDivider class={u.importantMy5}>居中标题</ElDivider>
               </DemoBlock>
 
               <DemoBlock
@@ -221,16 +219,12 @@ export default defineComponent({
                 desc="可拖动分栏容器，支持水平与垂直切分。"
                 block
               >
-                <ElSplitter style={{ height: '160px' }} class="rounded-antd border border-border-secondary">
+                <ElSplitter class={s.splitterBox}>
                   <ElSplitterPanel>
-                    <div class="flex h-full items-center justify-center bg-fill-tertiary text-sm">
-                      面板 A
-                    </div>
+                    <div class={s.splitterPanelA}>面板 A</div>
                   </ElSplitterPanel>
                   <ElSplitterPanel>
-                    <div class="flex h-full items-center justify-center bg-fill-quaternary text-sm">
-                      面板 B
-                    </div>
+                    <div class={s.splitterPanelB}>面板 B</div>
                   </ElSplitterPanel>
                 </ElSplitter>
               </DemoBlock>
@@ -240,10 +234,13 @@ export default defineComponent({
                 desc="自定义滚动条容器；用 height / maxHeight 限定可视高度。"
                 block
               >
-                <ElScrollbar height="140px" class="w-full max-w-72 rounded-antd border border-border-secondary p-3">
-                  <div class="flex flex-col gap-2 text-sm">
+                <ElScrollbar
+                  height="140px"
+                  class={`${u.wFull} ${u.maxW3xl} ${u.rounded} ${u.borderSecondary} ${u.p3}`}
+                >
+                  <div class={s.scrollList}>
                     {Array.from({ length: 16 }, (_, index) => (
-                      <div key={index} class="rounded-antd-sm bg-fill-quaternary px-3 py-1.5">
+                      <div key={index} class={s.scrollItem}>
                         列表项 {index + 1}
                       </div>
                     ))}
@@ -257,7 +254,7 @@ export default defineComponent({
                 block
               >
                 <ElWatermark content="Vue Antd Template">
-                  <div class="h-32 rounded-antd border border-border-secondary p-4 text-sm text-text-secondary">
+                  <div class={s.watermarkBox}>
                     水印会铺在这块内容之上，用于标识文档来源。
                   </div>
                 </ElWatermark>
@@ -268,15 +265,13 @@ export default defineComponent({
                 desc="把元素固定在滚动容器指定位置。本页滚动容器是 layout 的 <main>，需配合 target 才能在容器内固定。"
                 block
               >
-                <div class="h-40 overflow-y-auto rounded-antd border border-border-secondary">
-                  <ElAffix offset={0} target=".affix-scope">
-                    <div class="affix-scope w-full bg-primary px-3 py-2 text-center text-sm text-white">
-                      固定在容器顶部（target=".affix-scope"）
-                    </div>
-                  </ElAffix>
-                  <div class="flex flex-col gap-2 p-3 text-sm">
+                <div class={s.affixContainer}>
+                  <div class="affix-scope w-full">
+                    <div class={s.affixBar}>固定在容器顶部（target=".affix-scope"）</div>
+                  </div>
+                  <div class={s.affixList}>
                     {Array.from({ length: 12 }, (_, index) => (
-                      <div key={index} class="rounded-antd-sm bg-fill-quaternary px-3 py-1.5">
+                      <div key={index} class={s.affixListItem}>
                         滚动内容 {index + 1}
                       </div>
                     ))}
@@ -289,17 +284,15 @@ export default defineComponent({
                 desc="全局配置容器：包裹子树即可统一注入尺寸、语言包、命名空间等，无需逐个组件传参。"
                 block
               >
-                <div class="flex flex-col gap-4">
-                  <div class="flex flex-wrap items-center gap-3">
-                    <span class="w-36 shrink-0 text-sm text-text-tertiary">默认尺寸</span>
+                <div class={s.rowGroup}>
+                  <div class={s.configRow}>
+                    <span class={s.configLabel}>默认尺寸</span>
                     <ElButton type="primary">按钮</ElButton>
                     <ElButton>按钮</ElButton>
                   </div>
                   <ElConfigProvider size="small">
-                    <div class="flex flex-wrap items-center gap-3">
-                      <span class="w-36 shrink-0 text-sm text-text-tertiary">
-                        size="small" 包裹后
-                      </span>
+                    <div class={s.configRow}>
+                      <span class={s.configLabel}>size="small" 包裹后</span>
                       <ElButton type="primary">按钮</ElButton>
                       <ElButton>按钮</ElButton>
                     </div>

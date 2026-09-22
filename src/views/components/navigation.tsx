@@ -23,11 +23,14 @@ import {
 } from 'element-plus'
 import { ArrowDown, Setting } from '@element-plus/icons-vue'
 
+
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
+import * as u from '@/styles/utility.css'
+import * as s from './navigation.css'
 
-/** 锚点演示用的长内容，撑出滚动条 */
 const ANCHOR_SECTIONS = ['锚点一', '锚点二', '锚点三']
+
 
 export default defineComponent({
   name: 'ComponentsNavigationPage',
@@ -42,16 +45,13 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               <DemoBlock
                 title="ElMenu / ElMenuItem / ElMenuItemGroup / ElSubMenu"
                 desc="菜单；ElMenuItemGroup 分组，ElSubMenu 二级菜单的标题走 title 具名插槽。"
                 block
               >
-                <ElMenu
-                  defaultActive="1"
-                  class="w-60 rounded-antd border border-border-secondary"
-                >
+                <ElMenu defaultActive="1" class={s.menuBox}>
                   <ElMenuItem index="1">
                     <ElIcon>
                       <Setting />
@@ -102,20 +102,20 @@ export default defineComponent({
                 desc="标签页；modelValue 绑定激活项的 name，label 用属性或 label 具名插槽。"
                 block
               >
-                <div class="flex flex-col gap-6">
+                <div class={s.tabStack}>
                   <ElTabs
                     modelValue={tabActive.value}
                     onUpdate:modelValue={(value?: unknown) => (tabActive.value = String(value ?? ''))}
-                    class="max-w-xl"
+                    class={s.tabsBox}
                   >
                     <ElTabPane label="用户管理" name="first">
-                      <div class="text-sm text-text-secondary">用户管理的内容面板。</div>
+                      <div class={s.tabPaneText}>用户管理的内容面板。</div>
                     </ElTabPane>
                     <ElTabPane label="配置管理" name="second">
-                      <div class="text-sm text-text-secondary">配置管理的内容面板。</div>
+                      <div class={s.tabPaneText}>配置管理的内容面板。</div>
                     </ElTabPane>
                     <ElTabPane label="角色管理（禁用）" name="third" disabled>
-                      <div class="text-sm text-text-secondary">禁用项不可切换。</div>
+                      <div class={s.tabPaneText}>禁用项不可切换。</div>
                     </ElTabPane>
                   </ElTabs>
 
@@ -125,27 +125,27 @@ export default defineComponent({
                       (tabCardActive.value = String(value ?? ''))
                     }
                     type="border-card"
-                    class="max-w-xl"
+                    class={s.tabsBox}
                   >
                     <ElTabPane name="first">
                       {{
                         label: () => (
                           <span>
-                            <ElIcon class="mr-1">
+                            <ElIcon class={u.importantMr1}>
                               <Setting />
                             </ElIcon>
                             具名插槽标签
                           </span>
                         ),
                         default: () => (
-                          <div class="text-sm text-text-secondary">
+                          <div class={s.tabPaneText}>
                             label 用对象字面量插槽，可放图标与自定义结构。
                           </div>
                         ),
                       }}
                     </ElTabPane>
                     <ElTabPane label="普通标签" name="second">
-                      <div class="text-sm text-text-secondary">border-card 风格。</div>
+                      <div class={s.tabPaneText}>border-card 风格。</div>
                     </ElTabPane>
                   </ElTabs>
                 </div>
@@ -156,7 +156,7 @@ export default defineComponent({
                 desc="面包屑；separator 自定义分隔符，to 让某一级可点击跳转。"
                 block
               >
-                <div class="flex flex-col gap-4">
+                <div class={s.breadcrumbStack}>
                   <ElBreadcrumb separator="/">
                     <ElBreadcrumbItem to="/dashboard">首页</ElBreadcrumbItem>
                     <ElBreadcrumbItem>组件示例</ElBreadcrumbItem>
@@ -182,7 +182,7 @@ export default defineComponent({
                     default: () => (
                       <ElButton>
                         下拉菜单
-                        <ElIcon class="ml-1">
+                        <ElIcon class={s.dropdownArrow}>
                           <ArrowDown />
                         </ElIcon>
                       </ElButton>
@@ -208,13 +208,13 @@ export default defineComponent({
                 desc="步骤条；active 指定当前步骤下标，status 可单独覆盖某一步的状态。"
                 block
               >
-                <div class="flex flex-col gap-6">
-                  <ElSteps active={1} class="max-w-2xl">
+                <div class={s.stepsStack}>
+                  <ElSteps active={1} class={s.stepsBox}>
                     <ElStep title="已完成" description="创建项目模板" />
                     <ElStep title="进行中" description="补充组件示例" />
                     <ElStep title="待开始" description="接入后端接口" />
                   </ElSteps>
-                  <ElSteps active={1} simple class="max-w-2xl">
+                  <ElSteps active={1} simple class={s.stepsBox}>
                     <ElStep title="已完成" />
                     <ElStep title="进行中" />
                     <ElStep title="待开始" />
@@ -232,7 +232,7 @@ export default defineComponent({
                   content="这是一段页面描述"
                   onBack={() => ElMessage.info('点击了返回')}
                 >
-                  <div class="text-sm text-text-secondary">正文内容走默认插槽。</div>
+                  <div class={s.tabPaneText}>正文内容走默认插槽。</div>
                 </ElPageHeader>
               </DemoBlock>
 
@@ -241,10 +241,10 @@ export default defineComponent({
                 desc="回到顶部；target 指定滚动容器，visibilityHeight 控制出现时机。"
                 block
               >
-                <div class="backtop-scope relative h-40 overflow-y-auto rounded-antd border border-border-secondary">
-                  <div class="flex flex-col gap-2 p-3 text-sm">
+                <div class={s.backtopScope}>
+                  <div class={s.backtopList}>
                     {Array.from({ length: 20 }, (_, index) => (
-                      <div key={index} class="rounded-antd-sm bg-fill-quaternary px-3 py-1.5">
+                      <div key={index} class={s.backtopItem}>
                         滚动内容 {index + 1}
                       </div>
                     ))}
@@ -258,14 +258,14 @@ export default defineComponent({
                 desc="锚点导航；container 指定滚动容器，点击 ElAnchorLink 平滑滚动到对应 id。"
                 block
               >
-                <div class="anchor-scope relative h-64 overflow-y-auto rounded-antd border border-border-secondary">
-                  <div class="flex gap-6 p-4">
-                    <div class="min-w-0 flex-1">
+                <div class={s.anchorScope}>
+                  <div class={s.anchorLayout}>
+                    <div class={s.anchorMain}>
                       {ANCHOR_SECTIONS.map((label, index) => (
                         <div
                           key={label}
                           id={`nav-anchor-${index + 1}`}
-                          class="mb-3 flex h-36 items-center justify-center rounded-antd bg-fill-quaternary text-sm"
+                          class={s.anchorTarget}
                         >
                           {label}
                         </div>

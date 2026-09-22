@@ -16,6 +16,8 @@ import {
 } from 'element-plus'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import PageContainer from '@/components/PageContainer'
+import * as u from '@/styles/utility.css'
+import * as s from './table.css'
 
 type Status = 'active' | 'pending' | 'disabled'
 
@@ -125,13 +127,13 @@ export default defineComponent({
           extra: () => (
             <>
               <ElButton onClick={handleReset}>
-                <ElIcon class="mr-1">
+                <ElIcon class={s.iconMr}>
                   <Refresh />
                 </ElIcon>
                 重置
               </ElButton>
               <ElButton type="primary" onClick={handleCreate}>
-                <ElIcon class="mr-1">
+                <ElIcon class={s.iconMr}>
                   <Plus />
                 </ElIcon>
                 新建
@@ -139,14 +141,14 @@ export default defineComponent({
             </>
           ),
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               {/* 筛选区 */}
-              <div class="app-card p-5">
-                <ElForm inline labelWidth="64px" class="!gap-y-0">
+              <div class={`${u.appCard} ${u.p5}`}>
+                <ElForm inline labelWidth="64px" class={s.formNoGapY}>
                   <ElFormItem label="关键字">
                     {/* 包一层原生 div，以便挂载键盘事件 */}
                     <div
-                      class="w-56"
+                      class={s.inputWrap}
                       onKeydown={(event) => {
                         if (event.key === 'Enter') handleSearch()
                       }}
@@ -166,7 +168,7 @@ export default defineComponent({
                       onUpdate:modelValue={(value: string) => (query.role = value)}
                       placeholder="全部角色"
                       clearable
-                      class="!w-40"
+                      class={u.importantW40}
                     >
                       {ROLES.map((role) => (
                         <ElOption key={role} label={role} value={role} />
@@ -180,7 +182,7 @@ export default defineComponent({
                       onUpdate:modelValue={(value: Status | '') => (query.status = value)}
                       placeholder="全部状态"
                       clearable
-                      class="!w-40"
+                      class={u.importantW40}
                     >
                       {(Object.keys(STATUS) as Status[]).map((key) => (
                         <ElOption key={key} label={STATUS[key].label} value={key} />
@@ -190,7 +192,7 @@ export default defineComponent({
 
                   <ElFormItem>
                     <ElButton type="primary" onClick={handleSearch}>
-                      <ElIcon class="mr-1">
+                      <ElIcon class={s.iconMr}>
                         <Search />
                       </ElIcon>
                       查询
@@ -200,8 +202,8 @@ export default defineComponent({
               </div>
 
               {/* 表格区 */}
-              <div class="app-card overflow-hidden">
-                <ElTable data={paged.value} rowKey="id" class="!w-full">
+              <div class={`${u.appCard} ${u.overflowHidden}`}>
+                <ElTable data={paged.value} rowKey="id" class={u.importantWFull}>
                   <ElTableColumn prop="id" label="编号" width="100" />
                   <ElTableColumn prop="name" label="姓名" minWidth="120" />
                   <ElTableColumn prop="email" label="邮箱" minWidth="200" />
@@ -209,7 +211,6 @@ export default defineComponent({
 
                   <ElTableColumn label="状态" width="110">
                     {{
-                      // ElTableColumn 的插槽把 row 声明为 DefaultRow，所以参数标 unknown 再收敛回业务类型
                       default: ({ row }: { row: unknown }) => {
                         const item = row as Row
                         return (
@@ -224,7 +225,7 @@ export default defineComponent({
                   <ElTableColumn label="额度" width="130" align="right">
                     {{
                       default: ({ row }: { row: unknown }) => (
-                        <span class="tabular-nums">
+                        <span class={s.amountCell}>
                           ¥ {(row as Row).amount.toLocaleString('zh-CN')}
                         </span>
                       ),
@@ -238,14 +239,14 @@ export default defineComponent({
                       default: ({ row }: { row: unknown }) => {
                         const item = row as Row
                         return (
-                          <div class="flex items-center">
+                          <div class={s.actionGroup}>
                             <ElButton
                               link
                               type="primary"
                               size="small"
                               onClick={() => handleEdit(item)}
                             >
-                              <ElIcon class="mr-1">
+                              <ElIcon class={s.iconMr}>
                                 <Edit />
                               </ElIcon>
                               编辑
@@ -256,7 +257,7 @@ export default defineComponent({
                               size="small"
                               onClick={() => handleDelete(item)}
                             >
-                              <ElIcon class="mr-1">
+                              <ElIcon class={s.iconMr}>
                                 <Delete />
                               </ElIcon>
                               删除
@@ -268,7 +269,7 @@ export default defineComponent({
                   </ElTableColumn>
                 </ElTable>
 
-                <div class="flex justify-end border-t border-border-secondary px-5 py-3">
+                <div class={s.paginationBar}>
                   <ElPagination
                     currentPage={page.value}
                     pageSize={pageSize.value}

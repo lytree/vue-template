@@ -28,9 +28,8 @@ import {
 
 import { buildMenu, type MenuItem } from './menu'
 import { useAppStore, useUserStore } from '@/stores'
-
-const ICON_BUTTON =
-  'flex size-8 cursor-pointer items-center justify-center rounded-antd text-text-secondary transition-colors hover:bg-fill-tertiary hover:text-text'
+import * as u from '@/styles/utility.css'
+import * as s from './BasicLayout.css'
 
 export default defineComponent({
   name: 'BasicLayout',
@@ -64,7 +63,7 @@ export default defineComponent({
 
     /**
      * 递归渲染菜单项：
-     * 叶子 → `<ElMenuItem>`；分组 → `<ElSubMenu>`。
+     * 叶子 → <ElMenuItem>；分组 → <ElSubMenu>。
      * 注意 `title` 是具名插槽，在 TSX 里必须用对象字面量写法，不能直接塞子节点。
      */
     function renderMenuItem(item: MenuItem) {
@@ -97,25 +96,25 @@ export default defineComponent({
     }
 
     return () => (
-      <div class="flex h-full min-h-screen bg-layout">
+      <div class={`${u.flex} ${u.hFull} ${u.minHScreen} ${u.bgLayout}`}>
         {/* ============ 侧边栏 ============ */}
         <aside
           class={[
-            'flex shrink-0 flex-col border-r border-border-secondary bg-container transition-[width] duration-200',
-            appStore.collapsed ? 'w-16' : 'w-56',
+            `${u.flex} ${u.shrink0} ${u.flexCol} ${u.borderR} ${u.bgContainer} ${u.transitionWidth}`,
+            appStore.collapsed ? s.asideNarrow : s.asideWide,
           ]}
         >
-          <div class="flex h-14 shrink-0 items-center gap-2 border-b border-border-secondary px-4">
-            <div class="flex size-8 shrink-0 items-center justify-center rounded-antd bg-primary text-base font-bold text-white">
-              V
-            </div>
+          <div
+            class={`${u.flex} ${u.h14} ${u.shrink0} ${u.itemsCenter} ${u.gap2} ${u.borderB} ${u.px4}`}
+          >
+            <div class={s.logoBlock}>V</div>
             {appStore.collapsed ? null : (
-              <span class="truncate text-base font-semibold">Vue Antd</span>
+              <span class={`${u.truncate} ${u.textBase} ${u.fontSemibold}`}>Vue Antd</span>
             )}
           </div>
 
           <ElMenu
-            class="flex-1 overflow-y-auto"
+            class={`${u.flex1} ${u.overflowYAuto}`}
             defaultActive={route.path}
             collapse={appStore.collapsed}
             collapseTransition={false}
@@ -126,11 +125,13 @@ export default defineComponent({
         </aside>
 
         {/* ============ 主区域 ============ */}
-        <div class="flex min-w-0 flex-1 flex-col">
-          <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border-secondary bg-container px-4">
+        <div class={`${u.flex} ${u.minW0} ${u.flex1} ${u.flexCol}`}>
+          <header
+            class={`${u.flex} ${u.h14} ${u.shrink0} ${u.itemsCenter} ${u.gap3} ${u.borderB} ${u.bgContainer} ${u.px4}`}
+          >
             <button
               type="button"
-              class={ICON_BUTTON}
+              class={u.iconButton}
               aria-label="切换侧边栏"
               onClick={appStore.toggleCollapsed}
             >
@@ -143,16 +144,16 @@ export default defineComponent({
               ))}
             </ElBreadcrumb>
 
-            <div class="flex-1" />
+            <div class={u.flex1} />
 
             <ElTooltip content={appStore.dark ? '切换到亮色模式' : '切换到暗色模式'}>
-              <button type="button" class={ICON_BUTTON} onClick={appStore.toggleDark}>
+              <button type="button" class={u.iconButton} onClick={appStore.toggleDark}>
                 {appStore.dark ? <Sunny /> : <Moon />}
               </button>
             </ElTooltip>
 
             <ElBadge isDot>
-              <button type="button" class={ICON_BUTTON} aria-label="通知">
+              <button type="button" class={u.iconButton} aria-label="通知">
                 <Bell />
               </button>
             </ElBadge>
@@ -160,12 +161,12 @@ export default defineComponent({
             <ElDropdown onCommand={handleCommand}>
               {{
                 default: () => (
-                  <div class="flex cursor-pointer items-center gap-2 rounded-antd px-2 py-1 transition-colors hover:bg-fill-tertiary">
-                    <ElAvatar size={28} class="bg-primary text-white">
+                  <div class={u.userTrigger}>
+                    <ElAvatar size={28} class={`${u.bgPrimary} ${u.textWhite}`}>
                       {userStore.initials}
                     </ElAvatar>
-                    <span class="text-base">{userStore.info.name}</span>
-                    <ElIcon size={12} class="text-text-tertiary">
+                    <span class={u.textBase}>{userStore.info.name}</span>
+                    <ElIcon size={12} class={s.headerArrow}>
                       <ArrowDown />
                     </ElIcon>
                   </div>
@@ -173,13 +174,13 @@ export default defineComponent({
                 dropdown: () => (
                   <ElDropdownMenu>
                     <ElDropdownItem command="settings">
-                      <ElIcon class="mr-1">
+                      <ElIcon class={s.dropdownIcon}>
                         <SettingIcon />
                       </ElIcon>
                       个人设置
                     </ElDropdownItem>
                     <ElDropdownItem command="logout" divided>
-                      <ElIcon class="mr-1">
+                      <ElIcon class={s.dropdownIcon}>
                         <SwitchButton />
                       </ElIcon>
                       退出登录
@@ -190,12 +191,12 @@ export default defineComponent({
             </ElDropdown>
           </header>
 
-          <main class="min-h-0 flex-1 overflow-y-auto p-6">
+          <main class={`${u.minH0} ${u.flex1} ${u.overflowYAuto} ${u.p6}`}>
             <RouterView />
           </main>
 
-          <footer class="border-t border-border-secondary bg-container px-6 py-3 text-center text-sm text-text-tertiary">
-            Vue 3.6 · TSX · Element Plus · Tailwind CSS —— 设计风格致敬 Ant Design
+          <footer class={s.footerText}>
+            Vue 3.6 · TSX · Element Plus · vanilla-extract —— 设计风格致敬 Ant Design
           </footer>
         </div>
       </div>

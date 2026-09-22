@@ -14,6 +14,8 @@ import {
   ElSwitch,
 } from 'element-plus'
 import PageContainer from '@/components/PageContainer'
+import * as u from '@/styles/utility.css'
+import * as s from './basic.css'
 
 interface FormModel {
   name: string
@@ -75,7 +77,7 @@ export default defineComponent({
       <PageContainer title="表单页" subtitle="基础表单与校验规则，演示 Element Plus 与 antd 风格的融合。">
         {{
           default: () => (
-            <div class="app-card max-w-3xl p-6">
+            <div class={`${u.appCard} ${u.maxW3xl} ${u.p6}`}>
               <ElForm
                 ref={formRef}
                 model={form}
@@ -107,7 +109,7 @@ export default defineComponent({
                     onUpdate:modelValue={(value: string) => (form.owner = value)}
                     placeholder="请选择负责人"
                     clearable
-                    class="!w-full"
+                    class={s.selectFull}
                   >
                     {['林晚', '周予安', '许知遥', '陈墨'].map((name) => (
                       <ElOption key={name} label={name} value={name} />
@@ -136,7 +138,7 @@ export default defineComponent({
                     max={5}
                     controlsPosition="right"
                   />
-                  <span class="ml-2 text-sm text-text-tertiary">1 最低，5 最高</span>
+                  <span class={s.priorityHint}>1 最低，5 最高</span>
                 </ElFormItem>
 
                 <ElFormItem label="立即启用">
@@ -161,7 +163,7 @@ export default defineComponent({
                 </ElFormItem>
 
                 <ElFormItem label=" ">
-                  <div class="flex gap-2">
+                  <div class={s.buttonRow}>
                     <ElButton type="primary" onClick={handleSubmit}>
                       提交
                     </ElButton>

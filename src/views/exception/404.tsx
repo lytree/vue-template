@@ -1,6 +1,8 @@
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElButton } from 'element-plus'
+import * as u from '@/styles/utility.css'
+import * as s from './404.css'
 
 export default defineComponent({
   name: 'NotFoundPage',
@@ -8,13 +10,15 @@ export default defineComponent({
     const router = useRouter()
 
     return () => (
-      <div class="flex h-full min-h-screen flex-col items-center justify-center gap-3 bg-layout px-6 text-center">
-        <div class="text-3xl font-bold tracking-widest text-primary">
-          <span class="text-[96px] leading-none">404</span>
-        </div>
-        <p class="text-xl font-medium">抱歉，你访问的页面不存在</p>
-        <p class="text-sm text-text-tertiary">请检查地址是否正确，或返回首页继续浏览。</p>
-        <div class="mt-3 flex gap-2">
+      <div
+        class={`${u.flex} ${u.hFull} ${u.minHScreen} ${u.flexCol} ${u.itemsCenter} ${u.justifyCenter} ${u.gap3} ${u.bgLayout} ${u.px6} ${u.textCenter}`}
+      >
+        <div class={s.titleText}>404</div>
+        <p class={`${u.textXl} ${u.fontMedium}`}>抱歉，你访问的页面不存在</p>
+        <p class={`${u.textSm} ${u.textTextTertiary}`}>
+          请检查地址是否正确，或返回首页继续浏览。
+        </p>
+        <div class={`${u.mt3} ${u.flex} ${u.gap2}`}>
           <ElButton type="primary" onClick={() => router.push('/dashboard')}>
             返回首页
           </ElButton>

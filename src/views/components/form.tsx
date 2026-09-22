@@ -41,6 +41,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
+import * as u from '@/styles/utility.css'
+import * as s from './form.css'
 
 const CASCADER_OPTIONS = [
   {
@@ -138,18 +140,9 @@ export default defineComponent({
     const segmented = ref('日')
     const checkTag = ref(false)
 
-    /**
-     * Element Plus 的 modelValue 常是复杂联合类型，回调参数统一标 `unknown` 再显式收敛，
-     * 既不会撞上逆变检查，也能强制你在赋值处做类型转换。
-     */
     const setText = (value?: unknown) => (text.value = String(value ?? ''))
     const setNumber = (value?: unknown) => (number.value = Number(value ?? 0))
 
-    /**
-     * 只有 Autocomplete 的 fetchSuggestions 回调需要 any：
-     * Element Plus 的 AutocompleteFetchSuggestions 类型对回调参数做逆变检查，
-     * 标 unknown 会因 unknown 不可赋给 AutocompleteData 而失败。
-     */
     function fetchSuggestions(query: string, cb: (data: any) => void) {
       const list = query
         ? AUTOCOMPLETE_POOL.filter((item) => item.toLowerCase().includes(query.toLowerCase()))
@@ -164,13 +157,19 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               <DemoBlock
                 title="ElForm / ElFormItem · 校验"
                 desc="用 ref 拿到表单实例调用 validate()；rules 支持 required / type / 自定义 validator。"
                 block
               >
-                <ElForm ref={formRef} model={form} rules={rules} labelWidth="88px" class="max-w-md">
+                <ElForm
+                  ref={formRef}
+                  model={form}
+                  rules={rules}
+                  labelWidth="88px"
+                  class={u.maxWmd}
+                >
                   <ElFormItem label="名称" prop="name">
                     <ElInput
                       modelValue={form.name}
@@ -186,7 +185,7 @@ export default defineComponent({
                         (form.region = String(value ?? ''))
                       }
                       placeholder="请选择"
-                      class="w-full"
+                      class={s.formSelectFull}
                     >
                       {['浙江', '江苏', '广东'].map((item) => (
                         <ElOption key={item} label={item} value={item} />
@@ -214,23 +213,23 @@ export default defineComponent({
                 desc="文本 / 多行 / 密码 / 前后缀 / 尺寸；前后缀是具名插槽，用对象字面量传入。"
                 block
               >
-                <div class="flex flex-col gap-3">
+                <div class={s.inputStack}>
                   <ElInput
                     modelValue={text.value}
                     onUpdate:modelValue={setText}
                     placeholder="基础输入框"
                     clearable
-                    class="max-w-md"
+                    class={u.maxWmd}
                   />
                   <ElInput
                     modelValue={text.value}
                     onUpdate:modelValue={setText}
                     placeholder="带前后缀"
-                    class="max-w-md"
+                    class={u.maxWmd}
                   >
                     {{
-                      prefix: () => <span class="text-text-tertiary">@</span>,
-                      suffix: () => <span class="text-text-tertiary">.com</span>,
+                      prefix: () => <span class={u.textTextTertiary}>@</span>,
+                      suffix: () => <span class={u.textTextTertiary}>.com</span>,
                     }}
                   </ElInput>
                   <ElInput
@@ -241,7 +240,7 @@ export default defineComponent({
                     type="textarea"
                     rows={3}
                     placeholder="多行文本"
-                    class="max-w-md"
+                    class={u.maxWmd}
                   />
                   <ElInput
                     modelValue={text.value}
@@ -249,14 +248,14 @@ export default defineComponent({
                     type="password"
                     placeholder="密码"
                     showPassword
-                    class="max-w-md"
+                    class={u.maxWmd}
                   />
                   <ElInput
                     modelValue={text.value}
                     onUpdate:modelValue={setText}
                     size="small"
                     placeholder="小尺寸"
-                    class="max-w-md"
+                    class={u.maxWmd}
                   />
                 </div>
               </DemoBlock>
@@ -292,7 +291,7 @@ export default defineComponent({
                 <ElInputTag
                   modelValue={tags.value}
                   onUpdate:modelValue={(value?: unknown) => (tags.value = (value ?? []) as string[])}
-                  class="max-w-md"
+                  class={u.maxWmd}
                 />
               </DemoBlock>
 
@@ -327,7 +326,7 @@ export default defineComponent({
                     { value: 'pinia', label: 'Pinia' },
                   ]}
                   placeholder="输入 @ 触发提及"
-                  class="max-w-md"
+                  class={u.maxWmd}
                 />
               </DemoBlock>
 
@@ -343,7 +342,7 @@ export default defineComponent({
                   }
                   fetchSuggestions={fetchSuggestions}
                   placeholder="输入 Vue / Vite 试试"
-                  class="max-w-md"
+                  class={u.maxWmd}
                 />
               </DemoBlock>
 
@@ -352,12 +351,12 @@ export default defineComponent({
                 desc="选项作为子节点传入；分组用 ElOptionGroup；多选时 modelValue 是数组。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-3">
+                <div class={s.selectGroupRow}>
                   <ElSelect
                     modelValue={select.value}
                     onUpdate:modelValue={(value?: unknown) => (select.value = String(value ?? ''))}
                     placeholder="单选"
-                    class="!w-52"
+                    class={u.importantW52}
                   >
                     <ElOption label="Vue" value="vue" />
                     <ElOption label="React" value="react" />
@@ -369,7 +368,7 @@ export default defineComponent({
                     modelValue={select.value}
                     onUpdate:modelValue={(value?: unknown) => (select.value = String(value ?? ''))}
                     placeholder="带分组"
-                    class="!w-52"
+                    class={u.importantW52}
                   >
                     <ElOptionGroup label="前端框架">
                       <ElOption label="Vue" value="vue" />
@@ -390,7 +389,7 @@ export default defineComponent({
                     clearable
                     collapseTags
                     placeholder="多选"
-                    class="!w-64"
+                    class={u.importantW64}
                   >
                     {['Vue', 'React', 'Svelte', 'Solid'].map((item) => (
                       <ElOption key={item} label={item} value={item} />
@@ -409,7 +408,7 @@ export default defineComponent({
                   onUpdate:modelValue={(value?: unknown) => (selectV2.value = String(value ?? ''))}
                   options={SELECT_V2_OPTIONS}
                   placeholder="200 条虚拟滚动选项"
-                  class="!w-72"
+                  class={u.importantW72}
                 />
               </DemoBlock>
 
@@ -418,7 +417,7 @@ export default defineComponent({
                 desc="级联选择，modelValue 是各级 value 组成的数组；props 可自定义字段名或开启多选。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-3">
+                <div class={s.selectGroupRow}>
                   <ElCascader
                     modelValue={cascader.value}
                     onUpdate:modelValue={(value?: unknown) =>
@@ -426,7 +425,7 @@ export default defineComponent({
                     }
                     options={CASCADER_OPTIONS}
                     placeholder="请选择省市"
-                    class="!w-72"
+                    class={u.importantW72}
                   />
                   <ElCascader
                     modelValue={cascader.value}
@@ -436,7 +435,7 @@ export default defineComponent({
                     options={CASCADER_OPTIONS}
                     props={{ multiple: true }}
                     placeholder="多选级联"
-                    class="!w-72"
+                    class={u.importantW72}
                   />
                 </div>
               </DemoBlock>
@@ -460,8 +459,8 @@ export default defineComponent({
                 desc="单个复选用 modelValue:boolean；成组交给 ElCheckboxGroup，modelValue 是数组。"
                 block
               >
-                <div class="flex flex-col gap-3">
-                  <div class="flex items-center gap-4">
+                <div class={s.inputStack}>
+                  <div class={s.checkRow}>
                     <ElCheckbox
                       modelValue={checkTag.value}
                       onUpdate:modelValue={(value?: unknown) => (checkTag.value = Boolean(value))}
@@ -498,7 +497,7 @@ export default defineComponent({
                 desc="单选用 ElRadioGroup 包一层，值写在 ElRadio 的 value 上。"
                 block
               >
-                <div class="flex flex-col gap-3">
+                <div class={s.radioStack}>
                   <ElRadioGroup
                     modelValue={radio.value}
                     onUpdate:modelValue={(value?: unknown) => (radio.value = String(value ?? ''))}
@@ -539,7 +538,7 @@ export default defineComponent({
               </DemoBlock>
 
               <DemoBlock title="ElSlider" desc="滑块；传数组即为范围模式，showInput 附带输入框。">
-                <div class="flex w-full max-w-md flex-col gap-4">
+                <div class={s.sliderStack}>
                   <ElSlider
                     modelValue={slider.value}
                     onUpdate:modelValue={(value?: unknown) => (slider.value = Number(value ?? 0))}
@@ -579,13 +578,10 @@ export default defineComponent({
                   modelValue={color.value}
                   onUpdate:modelValue={(value?: unknown) => (color.value = String(value ?? ''))}
                 />
-                <div class="flex items-center gap-2 text-sm text-text-secondary">
+                <div class={s.colorDisplay}>
                   当前：
-                  <span
-                    class="inline-block size-4 rounded-antd-sm border border-border-secondary"
-                    style={{ background: color.value }}
-                  />
-                  <code class="font-mono">{color.value}</code>
+                  <span class={s.colorSwatch} style={{ background: color.value }} />
+                  <code class={s.colorCode}>{color.value}</code>
                 </div>
               </DemoBlock>
 
@@ -594,7 +590,7 @@ export default defineComponent({
                 desc="日期选择；配 valueFormat 后 modelValue 直接是格式化字符串，TSX 里最省事。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-3">
+                <div class={s.dateRow}>
                   <ElDatePicker
                     modelValue={date.value}
                     onUpdate:modelValue={(value?: unknown) => (date.value = String(value ?? ''))}
@@ -675,8 +671,6 @@ export default defineComponent({
               >
                 <ElTreeSelect
                   modelValue={treeValue.value}
-                  // Element Plus 的 ElTreeSelect 运行时确实 emit 了 update:modelValue，
-                  // 但类型声明漏了这个事件，直接写会报 "does not exist"。用展开语法绕过。
                   {...{
                     'onUpdate:modelValue': (value?: unknown) =>
                       (treeValue.value = String(value ?? '')),
@@ -685,7 +679,7 @@ export default defineComponent({
                   nodeKey="value"
                   checkStrictly
                   placeholder="请选择"
-                  class="!w-72"
+                  class={u.importantW72}
                 />
               </DemoBlock>
 
@@ -694,11 +688,11 @@ export default defineComponent({
                 desc="上传；autoUpload={false} 时只收集文件不发请求，适合本地校验后再统一提交。"
                 block
               >
-                <ElUpload autoUpload={false} multiple limit={3} class="max-w-md">
+                <ElUpload autoUpload={false} multiple limit={3} class={u.maxWmd}>
                   {{
                     default: () => (
-                      <div class="flex w-full cursor-pointer flex-col items-center gap-2 rounded-antd border border-dashed border-border px-6 py-8 text-sm text-text-secondary transition-colors hover:border-primary">
-                        <ElIcon size={32} class="text-text-tertiary">
+                      <div class={s.uploadDrop}>
+                        <ElIcon size={32} class={u.textTextTertiary}>
                           <UploadFilled />
                         </ElIcon>
                         点击或拖拽文件到此处

@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import vueJsx from 'vue-jsx/vite'
-import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
@@ -24,7 +24,11 @@ export default defineConfig(({ command }) => ({
       // 故用 command 判定：vite dev 为 'serve'，vite build 为 'build'。
       hmr: command === 'serve',
     }),
-    tailwindcss(),
+    // 🌟 vanilla-extract Vite 插件：
+    //    • 编译时把所有 .css.ts 文件转为静态 .css
+    //    • 自动把 *.css 注入到 import 该 .css.ts 的模块里
+    //    • 与 vue-jsx 完全无冲突（vanilla-extract 是 TS/JS AST 处理，不碰 Vue/JSX）
+    vanillaExtractPlugin(),
   ],
 
   resolve: {

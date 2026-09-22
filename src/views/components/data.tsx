@@ -34,6 +34,8 @@ import {
 
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
+import * as u from '@/styles/utility.css'
+import * as s from './data.css'
 
 interface Row {
   id: number
@@ -102,7 +104,6 @@ export default defineComponent({
     const activeNames = ref<string[]>(['1'])
     const calendarDate = ref(new Date())
     const treeChecked = ref<string[]>(['1-1'])
-    // ElCountdown 的 value 类型是 number | Dayjs，不接受 Date —— 传时间戳最省事
     const countdownTarget = Date.now() + 1000 * 60 * 60 * 26 + 1000 * 61
 
     return () => (
@@ -112,19 +113,18 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               <DemoBlock
                 title="ElTable / ElTableColumn"
                 desc="data 传数组；普通列用 prop，自定义列用作用域插槽（回调参数需显式标注类型）。"
                 block
               >
-                <ElTable data={ROWS} rowKey="id" border class="!w-full">
+                <ElTable data={ROWS} rowKey="id" border class={u.importantWFull}>
                   <ElTableColumn prop="id" label="编号" width="90" />
                   <ElTableColumn prop="name" label="姓名" width="120" />
                   <ElTableColumn prop="email" label="邮箱" minWidth="200" />
                   <ElTableColumn label="评分" width="120">
                     {{
-                      // ElTableColumn 的插槽把 row 声明为 DefaultRow，标 unknown 再收敛回 Row
                       default: ({ row }: { row: unknown }) => {
                         const item = row as Row
                         return (
@@ -205,14 +205,14 @@ export default defineComponent({
               </DemoBlock>
 
               <DemoBlock title="ElProgress" desc="进度条；type 支持 line / circle / dashboard。">
-                <div class="flex w-full flex-col gap-4">
+                <div class={s.progressWrap}>
                   <ElProgress percentage={68} />
                   <ElProgress percentage={100} status="success" />
                   <ElProgress percentage={42} status="warning" />
                   <ElProgress percentage={24} status="exception" />
                   <ElProgress percentage={75} strokeWidth={16} striped stripedFlow />
                 </div>
-                <div class="flex flex-wrap items-center gap-6">
+                <div class={s.progressCircleRow}>
                   <ElProgress type="circle" percentage={72} />
                   <ElProgress type="dashboard" percentage={48} />
                 </div>
@@ -228,16 +228,15 @@ export default defineComponent({
                   nodeKey="id"
                   defaultExpandAll
                   showCheckbox
-                  // ElTree 的类型声明里没有 modelValue：勾选值走 defaultCheckedKeys + check 事件
                   defaultCheckedKeys={treeChecked.value}
                   onCheck={(data: unknown) =>
                     (treeChecked.value = (Array.isArray(data) ? data : [data]).map(String))
                   }
-                  class="max-w-md"
+                  class={s.maxWmd}
                 >
                   {{
                     default: ({ data }: { data: { label: string } }) => (
-                      <span class="text-sm">{data.label}</span>
+                      <span class={u.textSm}>{data.label}</span>
                     ),
                   }}
                 </ElTree>
@@ -248,31 +247,23 @@ export default defineComponent({
                 desc="虚拟滚动树，适合上千节点；必须给 height，itemSize 控制行高。"
                 block
               >
-                <div class="max-w-md overflow-hidden rounded-antd border border-border-secondary">
+                <div class={s.treeV2Box}>
                   <ElTreeV2 data={TREE_V2_DATA} height={220} itemSize={32} />
                 </div>
               </DemoBlock>
 
               <DemoBlock title="ElBadge" desc="徽标；value 传数字，isDot 只显示小圆点。">
                 <ElBadge value={12}>
-                  <div class="flex size-10 items-center justify-center rounded-antd bg-fill-tertiary text-sm">
-                    消息
-                  </div>
+                  <div class={s.badgeSlot}>消息</div>
                 </ElBadge>
                 <ElBadge value={200} max={99}>
-                  <div class="flex size-10 items-center justify-center rounded-antd bg-fill-tertiary text-sm">
-                    上限
-                  </div>
+                  <div class={s.badgeSlot}>上限</div>
                 </ElBadge>
                 <ElBadge isDot>
-                  <div class="flex size-10 items-center justify-center rounded-antd bg-fill-tertiary text-sm">
-                    圆点
-                  </div>
+                  <div class={s.badgeSlot}>圆点</div>
                 </ElBadge>
                 <ElBadge value="new" type="primary">
-                  <div class="flex size-10 items-center justify-center rounded-antd bg-fill-tertiary text-sm">
-                    文本
-                  </div>
+                  <div class={s.badgeSlot}>文本</div>
                 </ElBadge>
               </DemoBlock>
 
@@ -280,16 +271,16 @@ export default defineComponent({
                 title="ElAvatar / ElAvatarGroup"
                 desc="头像；src 传图片地址，icon 可传图标组件，ElAvatarGroup 用 max 限制折叠数量。"
               >
-                <ElAvatar size={44} class="bg-primary text-white">
+                <ElAvatar size={44} class={s.avatarPrimary}>
                   V
                 </ElAvatar>
-                <ElAvatar size={44} shape="square" class="bg-success text-white">
+                <ElAvatar size={44} shape="square" class={s.avatarSuccess}>
                   A
                 </ElAvatar>
                 <ElAvatar size={44} src={IMG_SRC} />
                 <ElAvatarGroup collapseAvatars maxCollapseAvatars={3}>
                   {['V', 'A', 'N', 'T'].map((text) => (
-                    <ElAvatar key={text} class="bg-primary text-white">
+                    <ElAvatar key={text} class={s.avatarPrimary}>
                       {text}
                     </ElAvatar>
                   ))}
@@ -301,11 +292,11 @@ export default defineComponent({
                 desc="骨架屏；ElSkeleton 负责布局与动画，ElSkeletonItem 用 variant 指定占位形状。"
                 block
               >
-                <div class="flex flex-col gap-6">
+                <div class={s.skeletonRow}>
                   <ElSkeleton rows={3} animated />
-                  <div class="flex items-center gap-3">
+                  <div class={s.skeletonInline}>
                     <ElSkeletonItem variant="circle" style={{ width: '48px', height: '48px' }} />
-                    <div class="flex flex-1 flex-col gap-2">
+                    <div class={s.skeletonTextCol}>
                       <ElSkeletonItem variant="text" style={{ width: '40%' }} />
                       <ElSkeletonItem variant="text" style={{ width: '70%' }} />
                     </div>
@@ -313,14 +304,14 @@ export default defineComponent({
                 </div>
               </DemoBlock>
 
-              <DemoBlock title="ElCarousel / ElCarouselItem" desc="走马灯；height 固定可视高度，interval 控制切换间隔。">
-                <ElCarousel height="160px" interval={3500} class="w-full max-w-xl rounded-antd">
+              <DemoBlock
+                title="ElCarousel / ElCarouselItem"
+                desc="走马灯；height 固定可视高度，interval 控制切换间隔。"
+              >
+                <ElCarousel height="160px" interval={3500} class={s.carousel}>
                   {['#1677ff', '#52c41a', '#faad14'].map((bg, index) => (
                     <ElCarouselItem key={bg}>
-                      <div
-                        class="flex h-full items-center justify-center text-base text-white"
-                        style={{ background: bg }}
-                      >
+                      <div class={s.carouselSlide} style={{ background: bg }}>
                         第 {index + 1} 屏
                       </div>
                     </ElCarouselItem>
@@ -352,7 +343,7 @@ export default defineComponent({
                 desc="图片；previewSrcList 提供后点击即打开 ElImageViewer 大图预览，fit 控制填充方式。"
                 block
               >
-                <div class="flex flex-wrap items-center gap-4">
+                <div class={s.imageGrid}>
                   <ElImage src={IMG_SRC} fit="cover" style={{ width: '160px', height: '90px' }} />
                   <ElImage
                     src={IMG_SRC}
@@ -366,7 +357,7 @@ export default defineComponent({
                     }}
                   </ElImage>
                 </div>
-                <div class="mt-4">
+                <div class={u.mt4}>
                   <ElButton onClick={() => (viewerVisible.value = true)}>
                     手动调用 ElImageViewer
                   </ElButton>
@@ -379,12 +370,15 @@ export default defineComponent({
                 ) : null}
               </DemoBlock>
 
-              <DemoBlock title="ElStatistic" desc="统计数值；precision 控制小数位，前缀后缀用具名插槽。">
+              <DemoBlock
+                title="ElStatistic"
+                desc="统计数值；precision 控制小数位，前缀后缀用具名插槽。"
+              >
                 <ElStatistic title="活跃用户" value={128460} />
                 <ElStatistic title="转化率" value={0.6824} precision={2} suffix="%" />
                 <ElStatistic title="营收" value={9876543.21} precision={2}>
                   {{
-                    prefix: () => <span class="text-base">¥</span>,
+                    prefix: () => <span class={u.textBase}>¥</span>,
                   }}
                 </ElStatistic>
               </DemoBlock>
@@ -393,20 +387,19 @@ export default defineComponent({
                 title="ElCountdown"
                 desc="倒计时；value 传目标时间，format 用 DD / HH / mm / ss 占位。"
               >
-                <ElCountdown
-                  value={countdownTarget}
-                  format="DD 天 HH:mm:ss"
-                  class="text-lg font-medium"
-                />
+                <ElCountdown value={countdownTarget} format="DD 天 HH:mm:ss" class={s.countdown} />
               </DemoBlock>
 
-              <DemoBlock title="ElTimeline / ElTimelineItem" desc="时间线；type 控制节点样式，hollow 空心圆点。">
-                <ElTimeline class="w-full max-w-xl">
+              <DemoBlock
+                title="ElTimeline / ElTimelineItem"
+                desc="时间线；type 控制节点样式，hollow 空心圆点。"
+              >
+                <ElTimeline class={s.maxWxl}>
                   <ElTimelineItem timestamp="2026-09-01" type="primary">
                     创建项目模板
                   </ElTimelineItem>
                   <ElTimelineItem timestamp="2026-09-05" type="success">
-                    接入 Element Plus 与 Tailwind
+                    接入 Element Plus 与 vanilla-extract
                   </ElTimelineItem>
                   <ElTimelineItem timestamp="2026-09-10" color="#faad14" hollow>
                     完成组件示例补充
@@ -425,18 +418,18 @@ export default defineComponent({
                   onUpdate:modelValue={(value?: unknown) =>
                     (activeNames.value = (value ?? []) as string[])
                   }
-                  class="max-w-xl"
+                  class={s.maxWxl}
                 >
                   <ElCollapseItem title="用 title 属性" name="1">
-                    <div class="text-sm text-text-secondary">
+                    <div class={s.textSmSecondary}>
                       这是通过 title 属性传标题的写法，内容走默认插槽。
                     </div>
                   </ElCollapseItem>
                   <ElCollapseItem name="2">
                     {{
-                      title: () => <span class="font-medium">用 title 具名插槽</span>,
+                      title: () => <span class={u.fontMedium}>用 title 具名插槽</span>,
                       default: () => (
-                        <div class="text-sm text-text-secondary">
+                        <div class={s.textSmSecondary}>
                           需要自定义标题结构时改用 title 插槽。
                         </div>
                       ),
@@ -445,15 +438,20 @@ export default defineComponent({
                 </ElCollapse>
               </DemoBlock>
 
-              <DemoBlock title="ElCard" desc="卡片；header 可作属性或具名插槽，shadow 控制阴影层级。">
-                <div class="flex flex-wrap gap-4">
-                  <ElCard header="属性标题" class="w-64">
-                    <div class="text-sm text-text-secondary">header 直接传字符串。</div>
+              <DemoBlock
+                title="ElCard"
+                desc="卡片；header 可作属性或具名插槽，shadow 控制阴影层级。"
+              >
+                <div class={s.cardRow}>
+                  <ElCard header="属性标题" class={s.cardSmall}>
+                    <div class={s.cardBody}>header 直接传字符串。</div>
                   </ElCard>
-                  <ElCard shadow="hover" class="w-64">
+                  <ElCard shadow="hover" class={s.cardSmall}>
                     {{
-                      header: () => <span class="font-medium">具名插槽标题</span>,
-                      default: () => <div class="text-sm text-text-secondary">shadow="hover" 悬停有阴影。</div>,
+                      header: () => <span class={s.cardHeader}>具名插槽标题</span>,
+                      default: () => (
+                        <div class={s.cardBody}>shadow="hover" 悬停有阴影。</div>
+                      ),
                     }}
                   </ElCard>
                 </div>
@@ -463,7 +461,7 @@ export default defineComponent({
                 <ElEmpty description="暂无数据" />
                 <ElEmpty>
                   {{
-                    description: () => <span class="text-sm">自定义描述插槽</span>,
+                    description: () => <span class={u.textSm}>自定义描述插槽</span>,
                   }}
                 </ElEmpty>
               </DemoBlock>
@@ -478,11 +476,11 @@ export default defineComponent({
                   onUpdate:modelValue={(value?: unknown) =>
                     (calendarDate.value = (value as Date) ?? new Date())
                   }
-                  class="max-w-3xl"
+                  class={s.calendarBox}
                 >
                   {{
                     dateCell: ({ data }: { data: { day: string } }) => (
-                      <div class="text-center text-xs">{data.day.split('-')[2]}</div>
+                      <div class={s.calendarDay}>{data.day.split('-')[2]}</div>
                     ),
                   }}
                 </ElCalendar>

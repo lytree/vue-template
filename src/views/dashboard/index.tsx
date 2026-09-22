@@ -13,6 +13,8 @@ import {
 import PageContainer from '@/components/PageContainer'
 import StatCard from '@/components/StatCard'
 import { useUserStore } from '@/stores'
+import * as u from '@/styles/utility.css'
+import * as s from './index.css'
 
 const STATS = [
   { label: '今日活跃用户', value: '12,846', suffix: '人', trend: 12.4, icon: User, tone: 'primary' as const },
@@ -47,9 +49,9 @@ export default defineComponent({
       >
         {{
           default: () => (
-            <div class="flex flex-col gap-4">
+            <div class={u.stackCol}>
               {/* 指标卡 */}
-              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div class={`${u.grid} ${u.gridCols1} ${u.gap4} ${u.smGridCols2} ${u.xlGridCols4}`}>
                 {STATS.map((item) => (
                   <StatCard
                     key={item.label}
@@ -63,72 +65,74 @@ export default defineComponent({
                 ))}
               </div>
 
-              <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
-                {/* 快捷入口 */}
-                <div class="app-card p-5 xl:col-span-2">
-                  <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold">快捷入口</h3>
-                    <span class="text-sm text-text-tertiary">常用功能一键直达</span>
+              <div class={`${u.grid} ${u.gridCols1} ${u.gap4} ${u.xlGridCols3}`}>
+                {/* 快捷入口 + 访问趋势 */}
+                <div class={`${u.appCard} ${u.p5} ${u.xlColSpan2}`}>
+                  <div class={`${u.flex} ${u.itemsCenter} ${u.justifyBetween}`}>
+                    <h3 class={`${u.textBase} ${u.fontSemibold}`}>快捷入口</h3>
+                    <span class={`${u.textSm} ${u.textTextTertiary}`}>常用功能一键直达</span>
                   </div>
-                  <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div class={`${u.mt4} ${u.grid} ${u.gridCols1} ${u.gap3} ${u.smGridCols3}`}>
                     {SHORTCUTS.map((item) => (
                       <router-link
                         key={item.path}
                         to={item.path}
-                        class="group flex items-center justify-between gap-2 rounded-antd border border-border-secondary px-4 py-3 transition-colors hover:border-primary-border hover:bg-primary-bg"
+                        class={`${u.group} ${u.shortcutCard}`}
                       >
-                        <div class="min-w-0">
-                          <div class="truncate text-base font-medium">{item.title}</div>
-                          <div class="mt-0.5 truncate text-sm text-text-tertiary">
+                        <div class={u.minW0}>
+                          <div class={`${u.truncate} ${u.textBase} ${u.fontMedium}`}>
+                            {item.title}
+                          </div>
+                          <div class={`${u.mt0_5} ${u.truncate} ${u.textSm} ${u.textTextTertiary}`}>
                             {item.desc}
                           </div>
                         </div>
-                        <ElIcon class="shrink-0 text-text-quaternary transition-colors group-hover:text-primary">
+                        <ElIcon class={s.arrowIcon}>
                           <Right />
                         </ElIcon>
                       </router-link>
                     ))}
                   </div>
 
-                  <div class="mt-6 flex items-center justify-between border-t border-border-secondary pt-4">
-                    <h3 class="text-base font-semibold">访问趋势</h3>
-                    <div class="flex items-center gap-3 text-sm text-text-tertiary">
-                      <span class="flex items-center gap-1">
-                        <ElIcon class="text-[#ff4d4f]"><Top /></ElIcon>
+                  <div class={s.trendHeader}>
+                    <h3 class={`${u.textBase} ${u.fontSemibold}`}>访问趋势</h3>
+                    <div class={s.trendLegend}>
+                      <span class={s.trendLegendItem}>
+                        <ElIcon class={u.trendUp}>
+                          <Top />
+                        </ElIcon>
                         上涨 12.4%
                       </span>
-                      <span class="flex items-center gap-1">
-                        <ElIcon class="text-[#52c41a]"><Bottom /></ElIcon>
+                      <span class={s.trendLegendItem}>
+                        <ElIcon class={u.trendDown}>
+                          <Bottom />
+                        </ElIcon>
                         下跌 3.2%
                       </span>
                     </div>
                   </div>
-                  <div class="mt-4 flex h-32 items-end gap-2">
+                  <div class={s.barRow}>
                     {[38, 52, 44, 66, 58, 74, 62, 88, 70, 96, 82, 100].map((h, i) => (
-                      <div
-                        key={i}
-                        class="flex-1 rounded-t-[3px] bg-primary/85 transition-all hover:bg-primary"
-                        style={{ height: `${h}%` }}
-                      />
+                      <div key={i} class={u.trendBar} style={{ height: `${h}%` }} />
                     ))}
                   </div>
                 </div>
 
                 {/* 最近动态 */}
-                <div class="app-card p-5">
-                  <h3 class="text-base font-semibold">最近动态</h3>
-                  <ul class="mt-4 flex flex-col gap-4">
+                <div class={`${u.appCard} ${u.p5}`}>
+                  <h3 class={`${u.textBase} ${u.fontSemibold}`}>最近动态</h3>
+                  <ul class={s.activityList}>
                     {ACTIVITIES.map((item) => (
-                      <li key={item.target} class="flex gap-3">
-                        <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-                        <div class="min-w-0">
-                          <div class="text-sm">
-                            <span class="font-medium">{item.user}</span>
-                            <span class="text-text-secondary"> {item.action} </span>
-                            <span class="text-primary">{item.target}</span>
+                      <li key={item.target} class={s.activityItem}>
+                        <span class={u.activityDot} />
+                        <div class={u.minW0}>
+                          <div class={u.textSm}>
+                            <span class={u.fontMedium}>{item.user}</span>
+                            <span class={u.textTextSecondary}> {item.action} </span>
+                            <span class={u.textPrimary}>{item.target}</span>
                           </div>
-                          <div class="mt-0.5 text-sm text-text-quaternary">
-                            <ElIcon size={12} class="mr-1">
+                          <div class={`${u.mt0_5} ${u.textSm} ${u.textTextQuaternary}`}>
+                            <ElIcon size={12} class={u.mr1}>
                               <DataLine />
                             </ElIcon>
                             {item.time}
