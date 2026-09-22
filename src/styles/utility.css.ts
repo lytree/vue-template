@@ -2329,3 +2329,128 @@ export const themeFlash = style({
   animationName: themeFlashKeyframes,
   animationDuration: '200ms',
 })
+
+/**
+ * antd 令牌过渡 —— 把 `--ant-color-*` 系列 CSS 变量也纳入主题过渡。
+ * 切换 `<html class="dark">` 时，所有引用 antd 令牌的元素
+ * （background-color / color / border-color）会自动平滑切换。
+ *
+ * 注：Element Plus 组件内部的颜色变量（`--el-color-*`）是通过 `:root`
+ * 选择器定义的，dark 时切换不会触发 transition —— 这不影响，故选 dark。
+ */
+globalStyle(`.${themeTransitioning} *`, {
+  transitionDuration: 'var(--theme-transition-duration, 350ms)',
+  transitionProperty:
+    'background-color, color, border-color, fill, stroke, box-shadow',
+  transitionTimingFunction: 'var(--theme-transition-easing, cubic-bezier(0.4, 0, 0.2, 1))',
+})
+
+/**
+ * `themeSwitchExpand` —— 切换瞬间 body 从中心圆形展开。
+ * 类似 Material You 的"圆形 reveal"，覆盖整页。
+ *
+ * 用法：setTheme({ animate: 'expand' }) —— 自动挂在 <body> 上 600ms 后移除。
+ */
+const themeSwitchExpandKeyframes = keyframes({
+  from: {
+    clipPath: 'circle(0% at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%))',
+  },
+  to: {
+    clipPath: 'circle(150% at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%))',
+  },
+})
+export const themeSwitchExpand = style({
+  animationName: themeSwitchExpandKeyframes,
+  animationDuration: '600ms',
+  animationTimingFunction: 'cubic-bezier(0.65, 0, 0.35, 1)',
+})
+
+/**
+ * `themeSwitchBlur` —— 切换瞬间让整页模糊 → 清晰。
+ * 给 "切换瞬间失去焦点" 的高级感。配合 themeSwitchExpand 使用效果更佳。
+ */
+const themeSwitchBlurKeyframes = keyframes({
+  from: { filter: 'blur(8px)', opacity: 0.7 },
+  to: { filter: 'blur(0)', opacity: 1 },
+})
+export const themeSwitchBlur = style({
+  animationName: themeSwitchBlurKeyframes,
+  animationDuration: '400ms',
+  animationTimingFunction: 'ease-out',
+})
+
+/**
+ * `themeSwitchScale` —— 切换瞬间整页轻微缩放 + 还原。
+ */
+const themeSwitchScaleKeyframes = keyframes({
+  from: { transform: 'scale(0.98)', opacity: 0.85 },
+  to: { transform: 'scale(1)', opacity: 1 },
+})
+export const themeSwitchScale = style({
+  animationName: themeSwitchScaleKeyframes,
+  animationDuration: '350ms',
+  animationTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+})
+
+/**
+ * `themeSwitchSlide` —— 切换瞬间整页水平/垂直滑出再滑入。
+ * 类似移动端 navigation theme transition。
+ */
+const themeSwitchSlideKeyframes = keyframes({
+  from: { transform: 'translateY(12px)', opacity: 0 },
+  to: { transform: 'translateY(0)', opacity: 1 },
+})
+export const themeSwitchSlide = style({
+  animationName: themeSwitchSlideKeyframes,
+  animationDuration: '400ms',
+  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+})
+
+/**
+ * `themeShimmer` —— 切换瞬间整页金色光带扫过（高光感）。
+ * 类似 Apple iOS 切换主题时的 shimmer 效果。
+ */
+const themeShimmerKeyframes = keyframes({
+  '0%': { backgroundPosition: '-200% 0' },
+  '100%': { backgroundPosition: '200% 0' },
+})
+export const themeShimmer = style({
+  position: 'fixed',
+  inset: 0,
+  pointerEvents: 'none',
+  zIndex: 9998,
+  backgroundImage:
+    'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%)',
+  backgroundRepeat: 'no-repeat',
+  animationName: themeShimmerKeyframes,
+  animationDuration: '700ms',
+  animationTimingFunction: 'ease-in-out',
+})
+
+/**
+ * `themeColorMatrix` —— 切换瞬间整页色调临时偏移（绿色 / 紫色），给
+ * 「主题换骨」的视觉冲击。适合 brand / accent 主题。
+ */
+const themeColorMatrixKeyframes = keyframes({
+  '0%': { filter: 'hue-rotate(0deg)' },
+  '50%': { filter: 'hue-rotate(30deg)' },
+  '100%': { filter: 'hue-rotate(0deg)' },
+})
+export const themeColorMatrix = style({
+  animationName: themeColorMatrixKeyframes,
+  animationDuration: '500ms',
+  animationTimingFunction: 'ease-in-out',
+})
+
+/** 主题切换动画预设集合 —— 业务方遍历可选 */
+export const themeAnimations = {
+  fade: themeFadePulse,
+  blur: themeSwitchBlur,
+  scale: themeSwitchScale,
+  slide: themeSwitchSlide,
+  expand: themeSwitchExpand,
+  flash: themeFlash,
+  shimmer: themeShimmer,
+  matrix: themeColorMatrix,
+} as const
+export type ThemeAnimationName = keyof typeof themeAnimations

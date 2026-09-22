@@ -34,8 +34,9 @@ import {
   themes,
   themeTransitioning,
   themeFlash,
-  themeFadePulse,
+  themeAnimations,
   type ThemeName,
+  type ThemeAnimationName,
 } from './utility.css'
 
 /** 主题选项列表 —— 业务层遍历得到所有可选主题 */
@@ -68,37 +69,46 @@ export interface SetThemeOptions {
   easing?: string
   /** 是否触发 @view-transition 整页淡入淡出（Chrome 111+；默认 false） */
   viewTransition?: boolean
-  /** 是否在 body 上加 themeFadePulse 轻量淡入（默认 true） */
-  pulse?: boolean
+  /** 切换瞬间的整页动画类型（默认 'fade'） */
+  animation?: ThemeAnimationName | false
+  /** 自定义过渡 class —— 传字符串覆盖默认 */
+  bodyClass?: string
+  /** 点击位置（用于 ripple/expand 动画）。默认屏幕中心 */
+  originX?: number
+  originY?: number
 }
 
 /**
- * `setTheme(name, opts?)` —— 切换全局主题（带过渡动画）。
+ * setTheme(...) —— 切换全局主题，返回 Promise<ThemeName> 等动画完成。
  *
  * 实现步骤（按顺序）：
- *   1. 可选：用 `document.startViewTransition` 包裹整页切换（@view-transition API）
- *   2. 在 `<html>` 上挂 `themeTransitioning` className（启用 --theme-transition）
- *   3. 在 `<body>` 上挂 `themeFadePulse` —— 200ms 轻量淡入
- *   4. 切换主题 className
- *   5. 时长到了清理 className
+ *   1. 在 `<html>` 上挂 `themeTransitioning` className（启用 --theme-transition）
+ *   2. 在 `<body>` 上挂 `themeAnimations[animation]` —— 整页动画
+ *   3. 切换主题 className
+ *   4. 时长到了清理 className + resolve()
  *
  * 同时联动项目已有的「html.dark」机制（避免冲突）：
  *   • light / brand / accent  → 移除 .dark class
  *   • dark                     → 创建新的 .dark class
  */
-export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): void {
+export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): Promise<ThemeName> {
   const {
     animate = true,
     duration = THEME_TRANSITION_MS,
     easing = 'cubic-bezier(0.4, 0, 0.2, 1)',
     viewTransition = false,
-    pulse = true,
+    animation = 'fade',
+    bodyClass,
+    originX,
+    originY,
   } = opts
   currentTheme.value = name
-  if (typeof document === 'undefined') return
-  const root = document.documentElement
+  if (typeof document === 'undefined') return Promise.resolve(name)
 
-  /** 实际切换动作 —— 可被 viewTransition API 包裹 */
+  const root = document.documentElement
+  const body = document.body
+
+  /** 内部：实际切换动作（被 viewTransition 包裹或直接执行） */
   const apply = () => {
     if (animate) {
       // 临时覆盖 CSS 变量（如果传了自定义 duration / easing）
@@ -108,40 +118,92 @@ export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): void {
       }
       root.classList.add(themeTransitioning)
 
-      // body 上挂 themeFadePulse —— 触发淡入动画
-      if (pulse) {
-        const body = document.body
-        if (body) {
-          body.classList.add(themeFadePulse)
-          // 动画结束后移除（避免动画只触发一次）
-          window.setTimeout(() => body.classList.remove(themeFadePulse), 250)
+      // body 上挂切换动画（默认 fadePulse）
+      if (body) {
+        const animClass = bodyClass ?? (animation && themeAnimations[animation])
+        if (animClass) {
+          body.classList.add(animClass)
+          // 不同动画时长差异：取最长的覆盖时间
+          const maxAnimMs = Math.max(duration, getAnimMaxDuration(animation))
+          window.setTimeout(() => body.classList.remove(animClass), maxAnimMs + 50)
+        }
+
+        // 给 expand / ripple 动画设置点击位置
+        if (originX !== undefined && originY !== undefined) {
+          root.style.setProperty('--theme-ripple-x', `${originX}px`)
+          root.style.setProperty('--theme-ripple-y', `${originY}px`)
         }
       }
 
-      // 过渡结束后清理
+      // 过渡结束后清理 + resolve
       window.setTimeout(() => {
         root.classList.remove(themeTransitioning)
-        // 清除内联 var 覆盖（恢复 CSS 文件中定义的默认值）
         root.style.removeProperty('--theme-transition-duration')
         root.style.removeProperty('--theme-transition-easing')
+        if (originX !== undefined) root.style.removeProperty('--theme-ripple-x')
+        if (originY !== undefined) root.style.removeProperty('--theme-ripple-y')
+        resolveThemeTransition(name)
       }, duration + 50)
     } else {
-      // 立即切换：先取消过渡
       root.classList.remove(themeTransitioning)
+      resolveThemeTransition(name)
     }
 
     applyThemeClass(root, name)
   }
 
-  // 可选：用浏览器原生 @view-transition 包裹
-  if (viewTransition && typeof (document as { startViewTransition?: unknown }).startViewTransition === 'function') {
-    ;(document as Document & {
-      startViewTransition?: (cb: () => void) => unknown
-    }).startViewTransition?.(apply)
-    return
-  }
+  return new Promise<ThemeName>((resolve) => {
+    // 当前 setTheme 的 resolve 函数挂到全局
+    pendingResolve = resolve
 
-  apply()
+    // 可选：用浏览器原生 @view-transition 包裹
+    if (
+      viewTransition &&
+      typeof (document as { startViewTransition?: unknown }).startViewTransition === 'function'
+    ) {
+      ;(document as Document & {
+        startViewTransition?: (cb: () => void) => unknown
+      }).startViewTransition?.(apply)
+      return
+    }
+
+    apply()
+  })
+}
+
+/** 同步立即切换（不返回 Promise 的 fire-and-forget 版本，给内部 useTheme 用） */
+export function setThemeSync(name: ThemeName): void {
+  currentTheme.value = name
+  if (typeof document === 'undefined') return
+  applyThemeClass(document.documentElement, name)
+  if (name === 'dark') document.documentElement.classList.add('dark')
+  else document.documentElement.classList.remove('dark')
+}
+
+/** 当前 setTheme 的 resolve 函数 —— setTheme 完成后调一次 */
+let pendingResolve: ((value: ThemeName) => void) | null = null
+function resolveThemeTransition(name: ThemeName): void {
+  if (pendingResolve) {
+    pendingResolve(name)
+    pendingResolve = null
+  }
+}
+
+/** 取动画最大时长（用于清理 timer） */
+function getAnimMaxDuration(name: ThemeAnimationName | false): number {
+  if (!name) return 0
+  // 简单硬编码（与 utility.css.ts 里的 animationDuration 对齐）
+  const map: Record<ThemeAnimationName, number> = {
+    fade: 200,
+    blur: 400,
+    scale: 350,
+    slide: 400,
+    expand: 600,
+    flash: 200,
+    shimmer: 700,
+    matrix: 500,
+  }
+  return map[name]
 }
 
 /** 把主题 className 实际挂到 <html> 上（清掉旧主题 + 应用新主题） */
@@ -168,6 +230,27 @@ export function triggerThemeFlash(durationMs = 200): void {
 }
 
 /**
+ * `beginThemeTransition(opts)` —— 不切换主题，只启动一次主题过渡动画。
+ * 给路由切换 / 弹窗打开等场景用：手动让页面"主题过渡"一波，
+ * 而不实际切主题。
+ *
+ * 用法：
+ *   beginThemeTransition({ duration: 200 })
+ *   // 200ms 后自动清理
+ */
+export function beginThemeTransition(opts: { duration?: number } = {}): void {
+  if (typeof document === 'undefined') return
+  const root = document.documentElement
+  const { duration = THEME_TRANSITION_MS } = opts
+  root.style.setProperty('--theme-transition-duration', `${duration}ms`)
+  root.classList.add(themeTransitioning)
+  window.setTimeout(() => {
+    root.classList.remove(themeTransitioning)
+    root.style.removeProperty('--theme-transition-duration')
+  }, duration + 50)
+}
+
+/**
  * `getTheme()` —— 同步读取当前主题（仅在 setup 之外有用，组件内请用 useTheme）
  */
 export function getTheme(): ThemeName {
@@ -178,22 +261,39 @@ export function getTheme(): ThemeName {
  * `useTheme()` —— 在 Vue setup 中使用，返回响应式主题状态。
  *
  * 返回：
- *   • theme       —— 当前主题的 className（class={theme}）
- *   • themeName   —— 响应式主题名（computed）
- *   • setTheme    —— 切换主题的方法
- *   • isDark      —— 是否为暗色模式
- *   • toggleTheme —— 在 light / dark 之间切换
+ *   • theme        —— 当前主题的 className（class={theme}）
+ *   • themeName    —— 响应式主题名（computed）
+ *   • setTheme     —— 切换主题（返回 Promise<ThemeName>）
+ *   • isDark       —— 是否为暗色模式
+ *   • toggleTheme  —— 在 light / dark 之间切换（返回 Promise<ThemeName>）
+ *   • isTransitioning —— 当前是否正在过渡
  */
 export function useTheme() {
   const themeName = computed(() => currentTheme.value)
   const theme = computed(() => themes[currentTheme.value])
   const isDark = computed(() => currentTheme.value === 'dark')
+  const isTransitioning = ref(false)
   return {
     themeName,
     theme,
     isDark,
-    setTheme,
-    toggleTheme: () => setTheme(isDark.value ? 'light' : 'dark'),
+    isTransitioning: computed(() => isTransitioning.value),
+    setTheme: async (name: ThemeName, opts?: SetThemeOptions) => {
+      isTransitioning.value = true
+      try {
+        return await setTheme(name, opts)
+      } finally {
+        isTransitioning.value = false
+      }
+    },
+    toggleTheme: async (opts?: SetThemeOptions) => {
+      isTransitioning.value = true
+      try {
+        return await setTheme(isDark.value ? 'light' : 'dark', opts)
+      } finally {
+        isTransitioning.value = false
+      }
+    },
   }
 }
 

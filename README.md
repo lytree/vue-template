@@ -282,15 +282,123 @@ triggerThemeFlash()                          // 整页 200ms 闪烁指示
 | capability | 实现 |
 |---|---|
 | **CSS 变量层过渡** | `--theme-transition-duration` 默认 0ms，setTheme 调用时临时改为 350ms，结束时清回 |
-| **受主题影响的属性** | `background-color` / `color` / `border-color` / `fill` / `stroke` |
+| **受主题影响的属性** | `background-color` / `color` / `border-color` / `fill` / `stroke` / `box-shadow` |
+| **antd 令牌过渡绑定** | `.themeTransitioning *` 内联规则，让所有引用 `--ant-color-*` 的元素也走过渡 |
 | **themeFadePulse** | body 切换瞬间 200ms 轻量淡入 |
-| **@view-transition** | Chrome 111+ 整页淡入淡出（`document.startViewTransition()`） |
-| **prefers-reduced-motion** | 系统级"减少动效"时自动归零 |
-| **themeIconRotate** | Sun/Moon 切换按钮 500ms 360° 旋转 |
-| **themeIconAppear** | 双图标切换 300ms 缩放 + 旋转淡入 |
-| **themeMorph** | 500ms 暗色 morph 背景 |
+| **themeSwitchExpand** | 圆形从点击位置扩展到 150% —— Material You reveal 600ms |
+| **themeSwitchBlur** | 整页模糊8px → 0 + opacity 0.7 → 1，400ms |
+| **themeSwitchScale** | scale 0.98 → 1 + opacity 0.85 → 1，350ms overshoot |
+| **themeSwitchSlide** | translateY 12px → 0 + opacity 0 → 1，400ms |
+| **themeShimmer** | 整页金色光带扫过，iOS 风格，700ms |
+| **themeColorMatrix** | hue-rotate 0° → 30° → 0°，适合 brand / accent 主题，500ms |
 | **themeFlash** | 全屏 200ms 半透明闪烁（`triggerThemeFlash()` 触发） |
 | **themeRipple** | 从点击位置圆形扩散的 keyframes 预备能力 |
+| **themeIconRotate** | Sun/Moon 切换按钮 500ms 360° 旋转 |
+| **themeIconAppear** | 双图标切换 300ms 缩放 + 旋转淡入 |
+| **@view-transition** | Chrome 111+ 整页淡入淡出（`document.startViewTransition()`） |
+| **prefers-reduced-motion** | 系统级"减少动效"时自动归零 |
+
+**预设动画集合**（`themeAnimations`）：
+
+```ts
+themeAnimations = {
+  fade, blur, scale, slide, expand, flash, shimmer, matrix
+}
+type ThemeAnimationName = keyof typeof themeAnimations
+```
+
+**`setTheme` 接受的可选项**（升级版，返回 `Promise<ThemeName>`）：
+
+```ts
+export interface SetThemeOptions {
+  animate?: boolean              // 是否启用过渡（默认 true）
+  duration?: number              // 自定义过渡时长（ms，默认 350）
+  easing?: string                // 自定义缓动函数
+  viewTransition?: boolean       // 浏览器原生 view-transition API
+  animation?: ThemeAnimationName | false  // 整页动画类型（默认 'fade'）
+  bodyClass?: string             // 自定义过渡 class 覆盖默认
+  originX?: number               // 点击位置 X（用于 ripple/expand 动画）
+  originY?: number               // 点击位置 Y
+}
+
+setTheme('dark', { animation: 'expand', originX, originY })
+setTheme('brand', { animation: 'shimmer' })
+setTheme('accent', { animation: 'blur', duration: 500 })
+
+await setTheme('dark')  // 返回 Promise<ThemeName>，等动画完成
+```
+
+**辅助 API**（[useTheme.ts](file:///f:/Code/Web/vue-template/src/styles/useTheme.ts)）：
+
+```ts
+setThemeSync(name)                 // fire-and-forget 同步版本
+beginThemeTransition({ duration }) // 不切主题，只触发一次过渡（路由切换 / 弹窗打开）
+triggerThemeFlash()                // 整页 200ms 闪烁（手动触发）
+```
+
+**Vue `useTheme()` hook 升级**：
+
+```ts
+const {
+  theme, themeName, isDark,
+  isTransitioning,  // 新增：响应式 ref，过渡期间为 true
+  setTheme,          // async，返回 Promise<ThemeName>
+  toggleTheme,       // async，返回 Promise<ThemeName>
+} = useTheme()
+
+<button :disabled="isTransitioning" onClick={toggleTheme}>切换</button>
+```
+
+### 4.2 完整动画示例
+
+```tsx
+import { useTheme, beginThemeTransition } from '@/styles/useTheme'
+import { themeIconRotate } from '@/styles/utility.css'
+
+// 1. 默认切换（fadePulse 200ms）
+<button onClick={toggleTheme}>切换</button>
+
+// 2. Material You 圆形扩散（带点击位置）
+<button
+  onClick={async (e) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    await setTheme('dark', {
+      animation: 'expand',
+      originX: rect.left + rect.width / 2,
+      originY: rect.top + rect.height / 2,
+    })
+  }}
+>
+  切到暗色（圆形展开）
+</button>
+
+// 3. 模糊 / 缩放 / 滑动切换
+<button onClick={() => setTheme('brand', { animation: 'blur' })}>blur 切换</button>
+<button onClick={() => setTheme('accent', { animation: 'scale' })}>scale 切换</button>
+<button onClick={() => setTheme('light', { animation: 'slide' })}>slide 切换</button>
+
+// 4. iOS 风 shimmer 高光（适合品牌主题切换）
+<button onClick={() => setTheme('brand', { animation: 'shimmer' })}>
+  iOS shimmer
+</button>
+
+// 5. Sun/Moon 切换按钮（图标转一圈）
+<button onClick={toggleTheme} class={themeIconRotate}>
+  <Sun v-if={!isDark" /><Moon v-else />
+</button>
+
+// 6. 路由切换时也触发主题过渡（不实际切主题）
+import { useRouter } from 'vue-router'
+router.afterEach(() => beginThemeTransition({ duration: 200 }))
+
+// 7. 浏览器原生 view-transition（Chrome 111+）
+<button onClick={() => document.startViewTransition(() => setTheme('dark'))}>
+  整页过渡
+</button>
+
+// 8. 立即切换（关闭动画）
+<button onClick={() => setTheme('dark', { animate: false })}>立即切换</button>
+```
 
 ### 5. 运行时工具函数（[compose.ts](file:///f:/Code/Web/vue-template/src/styles/compose.ts)）
 
@@ -367,11 +475,30 @@ import { applyDynamic } from '@/styles/compose'
   class={compose(bgGradientToBr, backdropBlur, dynGradientFromTo)}
 />
 
-// Tailwind 主题切换: useTheme() + setTheme + 平滑动画
-const { theme, toggleTheme } = useTheme()
-<button onClick={toggleTheme} class={themeIconRotate}>
+// Tailwind 主题切换: useTheme() + setTheme + 8 种动画预设
+const { theme, toggleTheme, isTransitioning, setTheme } = useTheme()
+<button :disabled="isTransitioning" onClick={toggleTheme} class={themeIconRotate}>
   切换
 </button>
+
+// Material You 圆形扩散 + 点击位置
+<button
+  onClick={async (e) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    await setTheme('dark', {
+      animation: 'expand',
+      originX: rect.left + rect.width / 2,
+      originY: rect.top + rect.height / 2,
+    })
+  }}
+>
+  切到暗色
+</button>
+
+// 8 种动画：fade / blur / scale / slide / expand / flash / shimmer / matrix
+<button onClick={() => setTheme('brand', { animation: 'shimmer' })}>iOS 风</button>
+<button onClick={() => setTheme('accent', { animation: 'blur' })}>模糊切换</button>
+
 <section class={theme}>
   <div class={themeCard}>主题感知卡片，自动跟随切换</div>
 </section>
