@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { Collection, DataLine, EditPen, Grid, Setting } from '@element-plus/icons-vue'
+import { Brush, Collection, DataLine, EditPen, Grid, Setting } from '@element-plus/icons-vue'
 
 import BasicLayout from '@/layouts/BasicLayout'
 
@@ -71,6 +71,12 @@ export const routes: RouteRecordRaw[] = [
             name: 'ComponentsNavigation',
             component: () => import('@/views/components/navigation'),
             meta: { title: '导航组件', order: 5 },
+          },
+          {
+            path: 'theme',
+            name: 'ComponentsTheme',
+            component: () => import('@/views/theme/index'),
+            meta: { title: '主题动画演示', icon: Brush, order: 6 },
           },
         ],
       },

@@ -39,6 +39,9 @@ import {
   type ThemeAnimationName,
 } from './utility.css'
 
+// Re-export 让业务方直接从 useTheme 拿主题类型（避免 import 路径分裂）
+export type { ThemeName, ThemeAnimationName }
+
 /** 主题选项列表 —— 业务层遍历得到所有可选主题 */
 export const themeOptions: ReadonlyArray<{
   name: ThemeName
