@@ -1,0 +1,94 @@
+/* Components Navigation 私有样式 */
+
+.menuBox {
+  width: 240px;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.tabStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tabsBox {
+  max-width: 576px;
+}
+
+.tabPaneText {
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.breadcrumbStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dropdownArrow {
+  margin-left: 4px;
+}
+
+.stepsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stepsBox {
+  max-width: 672px;
+}
+
+.backtopScope {
+  position: relative;
+  height: 160px;
+  overflow-y: auto;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.backtopList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.backtopItem {
+  border-radius: var(--ant-border-radius-sm);
+  background-color: var(--ant-color-fill-quaternary);
+  padding: 6px 12px;
+}
+
+.anchorScope {
+  position: relative;
+  height: 256px;
+  overflow-y: auto;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.anchorLayout {
+  display: flex;
+  gap: 24px;
+  padding: 16px;
+}
+
+.anchorMain {
+  min-width: 0;
+  flex: 1 1 0%;
+}
+
+.anchorTarget {
+  margin-bottom: 12px;
+  display: flex;
+  height: 144px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--ant-color-fill-quaternary);
+  font-size: 14px;
+}

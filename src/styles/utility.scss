@@ -1,0 +1,342 @@
+/**
+ * utility.scss —— 全局原子工具类（SCSS + CSS Modules 时代的 utility shim）
+ *
+ * 用法：业务 TSX 仍然 `import * as u from '@/styles/utility'`，u.xxx 返回字符串 className。
+ * 对应样式在本文件里以同名 className 注册；component 级样式走 *.module.scss。
+ *
+ * 设计原则：
+ *   • 全部 className 与 vanilla-extract 版 1:1 保持（同样的字符串）
+ *   • 不依赖任何编译期上下文（无 atomic CSS 引擎，体积稍大但可读）
+ *   • 全部数值走 --space-unit / --ant-* 设计令牌，主题可平滑切换
+ */
+
+/* ========================================================================== */
+/* 1. 布局 —— flex / grid                                                     */
+/* ========================================================================== */
+
+.flex          { display: flex; }
+.inlineFlex    { display: inline-flex; }
+.grid          { display: grid; }
+.block         { display: block; }
+.flexCol       { display: flex; flex-direction: column; }
+.flexRow       { display: flex; flex-direction: row; }
+.flexWrap      { flex-wrap: wrap; }
+.itemsCenter   { align-items: center; }
+.itemsStart    { align-items: flex-start; }
+.itemsEnd      { align-items: flex-end; }
+.itemsBaseline { align-items: baseline; }
+.justifyCenter { justify-content: center; }
+.justifyBetween { justify-content: space-between; }
+
+/* ========================================================================== */
+/* 2. 间距 —— 4px 为步长（var(--space-unit)）                                */
+/* ========================================================================== */
+
+.p1  { padding: calc(var(--space-unit) * 1); }
+.p2  { padding: calc(var(--space-unit) * 2); }
+.p3  { padding: calc(var(--space-unit) * 3); }
+.p4  { padding: calc(var(--space-unit) * 4); }
+.p5  { padding: calc(var(--space-unit) * 5); }
+.p6  { padding: calc(var(--space-unit) * 6); }
+.px4 { padding-left: calc(var(--space-unit) * 4); padding-right: calc(var(--space-unit) * 4); }
+.px6 { padding-left: calc(var(--space-unit) * 6); padding-right: calc(var(--space-unit) * 6); }
+.py2 { padding-top: calc(var(--space-unit) * 2); padding-bottom: calc(var(--space-unit) * 2); }
+
+.gap1  { gap: calc(var(--space-unit) * 1); }
+.gap2  { gap: calc(var(--space-unit) * 2); }
+.gap3  { gap: calc(var(--space-unit) * 3); }
+.gap4  { gap: calc(var(--space-unit) * 4); }
+.gapX8 { column-gap: calc(var(--space-unit) * 8); }
+.gapY3 { row-gap: calc(var(--space-unit) * 3); }
+
+.mt0_5 { margin-top: calc(var(--space-unit) * 0.5); }
+.mt1   { margin-top: calc(var(--space-unit) * 1); }
+.mt2   { margin-top: calc(var(--space-unit) * 2); }
+.mt3   { margin-top: calc(var(--space-unit) * 3); }
+.mt4   { margin-top: calc(var(--space-unit) * 4); }
+.mb1   { margin-bottom: calc(var(--space-unit) * 1); }
+.mb3   { margin-bottom: calc(var(--space-unit) * 3); }
+.mr1   { margin-right: calc(var(--space-unit) * 1); }
+.pb3   { padding-bottom: calc(var(--space-unit) * 3); }
+
+/* ========================================================================== */
+/* 3. 尺寸 / 容器                                                              */
+/* ========================================================================== */
+
+.wFull      { width: 100%; }
+.w20        { width: calc(var(--space-unit) * 20); }
+.hFull      { height: 100%; }
+.h14        { height: calc(var(--space-unit) * 14); }
+.minW0      { min-width: 0; }
+.minH0      { min-height: 0; }
+.minHScreen { min-height: 100vh; }
+.size9      { width: calc(var(--space-unit) * 9); height: calc(var(--space-unit) * 9); }
+.maxW3xl    { max-width: 768px; }
+.maxWmd     { max-width: 448px; }
+.flex1      { flex: 1 1 0%; }
+.shrink0    { flex-shrink: 0; }
+
+/* 强制覆盖：Element Plus 默认宽度 */
+.importantWFull { width: 100% !important; }
+.importantW40   { width: 160px !important; }
+.importantW52   { width: 208px !important; }
+.importantW64   { width: 256px !important; }
+.importantW72   { width: 288px !important; }
+.importantMy5   { margin: calc(var(--space-unit) * 5) 0 !important; }
+.importantMr1   { margin-right: calc(var(--space-unit) * 1) !important; }
+
+/* ========================================================================== */
+/* 4. 文字                                                                     */
+/* ========================================================================== */
+
+.textXs    { font-size: 12px; }
+.textSm    { font-size: 14px; }
+.textBase  { font-size: 16px; }
+.textLg    { font-size: 18px; }
+.textXl    { font-size: 20px; }
+.text3xl   { font-size: 30px; line-height: 1.2; }
+
+.fontMedium   { font-weight: 500; }
+.fontSemibold { font-weight: 600; }
+.fontBold     { font-weight: 700; }
+.fontMono     { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; }
+
+.tabularNums  { font-variant-numeric: tabular-nums; }
+.truncate     {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.textCenter   { text-align: center; }
+
+/* 文字色 —— 主题感知（跟随 antd 令牌） */
+.textPrimary         { color: var(--ant-color-primary); }
+.textTextSecondary   { color: var(--ant-color-text-secondary); }
+.textTextTertiary    { color: var(--ant-color-text-tertiary); }
+.textTextQuaternary  { color: var(--ant-color-text-quaternary); }
+.textWhite           { color: #fff; }
+.textError           { color: var(--ant-color-error); }
+
+/* ========================================================================== */
+/* 5. 背景 / 边框                                                              */
+/* ========================================================================== */
+
+.bgLayout        { background-color: var(--ant-color-bg-layout); }
+.bgContainer     { background-color: var(--ant-color-bg-container); }
+.bgPrimary       { background-color: var(--ant-color-primary); }
+.bgPrimary85     { background-color: rgba(22, 119, 255, 0.85); }
+
+.border          { border: 1px solid var(--ant-color-border); }
+.borderR         { border-right: 1px solid var(--ant-color-border-secondary); }
+.borderB         { border-bottom: 1px solid var(--ant-color-border-secondary); }
+.borderPrimary   { border: 1px solid var(--ant-color-primary); }
+.borderSecondary { border: 1px solid var(--ant-color-border-secondary); }
+
+.rounded         { border-radius: var(--ant-border-radius); }
+.cursorPointer   { cursor: pointer; }
+
+/* 分割线（每行之间一根细分隔线，最后一行除外） */
+.divideY > * + * {
+  border-top: 1px solid var(--ant-color-border-secondary);
+  padding-top: calc(var(--space-unit) * 3);
+}
+
+/* ========================================================================== */
+/* 6. 过渡 / 动画                                                              */
+/* ========================================================================== */
+
+.transitionColors { transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
+.transitionWidth  { transition: width 0.2s; }
+
+/* 趋势箭头 */
+.trendUp   { color: var(--ant-color-error); display: inline-flex; align-items: center; gap: 2px; }
+.trendDown { color: var(--ant-color-success); display: inline-flex; align-items: center; gap: 2px; }
+
+/* ========================================================================== */
+/* 7. 排版 / 工具                                                              */
+/* ========================================================================== */
+
+.overflowHidden  { overflow: hidden; }
+.overflowYAuto   { overflow-y: auto; }
+.group           { position: relative; }
+
+/* 应用卡片 */
+.appCard {
+  background-color: var(--ant-color-bg-container);
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+.appCardHoverable {
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.appCardHoverable:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: var(--ant-color-primary);
+}
+
+/* 顶栏图标按钮 */
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ant-border-radius);
+  color: var(--ant-color-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+.iconButton:hover {
+  background-color: var(--ant-color-fill-tertiary);
+  color: var(--ant-color-text);
+}
+
+/* 用户下拉触发器 */
+.userTrigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: var(--ant-border-radius);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.userTrigger:hover {
+  background-color: var(--ant-color-fill-tertiary);
+}
+
+/* 列堆叠（垂直方向 gap 16） */
+.stackCol {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-unit) * 4);
+}
+
+/* 响应式：sm / xl 网格断点 */
+.smGridCols2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.smGridCols3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.gridCols1   { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.gridCols4   { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.xlGridCols3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.xlGridCols4 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.xlColSpan2  { grid-column: span 1 / span 1; }
+
+@media (min-width: 640px) {
+  .smGridCols2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .smGridCols3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .gridCols4   { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .xlGridCols3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .xlGridCols4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .xlColSpan2  { grid-column: span 2 / span 2; }
+}
+
+/* ========================================================================== */
+/* 8. 业务专属组件 utility —— dashboard / theme demo 用                       */
+/* ========================================================================== */
+
+/* dashboard 趋势条柱子（柱体颜色 + 基础高度由父容器决定） */
+.trendBar {
+  flex: 1 1 0%;
+  min-width: 4px;
+  background: linear-gradient(180deg, var(--ant-color-primary) 0%, var(--ant-color-primary-bg) 100%);
+  border-radius: 2px 2px 0 0;
+}
+
+/* dashboard 动态圆点 */
+.activityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ant-color-primary);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+/* dashboard 快捷入口卡片 */
+.shortcutCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--ant-color-fill-quaternary);
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.15s;
+}
+.shortcutCard:hover {
+  background-color: var(--ant-color-primary-bg);
+  transform: translateY(-1px);
+}
+
+/* 主题感知 utility —— 背景 / 边框 / 文字全部跟随 --theme-* 变量 */
+.themeCard {
+  padding: 12px 16px;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+  transition: background-color var(--theme-transition-duration) var(--theme-transition-easing),
+              color var(--theme-transition-duration) var(--theme-transition-easing),
+              border-color var(--theme-transition-duration) var(--theme-transition-easing);
+}
+.themePrimaryBtn {
+  padding: 6px 16px;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--theme-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--theme-transition-duration) var(--theme-transition-easing);
+}
+.themePrimaryBtn:hover {
+  background-color: var(--theme-color-hover, var(--theme-color));
+}
+
+/* Sun/Moon 切换按钮图标旋转 */
+.themeIconRotate {
+  transition: transform 0.5s ease;
+}
+.themeIconRotate:active {
+  transform: rotate(360deg);
+}
+
+/* overlay recipe —— theme demo 用 */
+.overlay {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--ant-border-radius);
+  font-weight: 500;
+}
+.overlay-tone-primary { background-color: var(--ant-color-primary); color: #fff; }
+.overlay-tone-success { background-color: var(--ant-color-success); color: #fff; }
+.overlay-tone-warning { background-color: var(--ant-color-warning); color: #fff; }
+.overlay-tone-error   { background-color: var(--ant-color-error);   color: #fff; }
+.overlay-tone-default { background-color: var(--ant-color-fill-tertiary); color: var(--ant-color-text); }
+
+.overlay-size-sm { font-size: 12px; padding: 2px 8px; }
+.overlay-size-md { font-size: 14px; padding: 4px 12px; }
+.overlay-size-lg { font-size: 16px; padding: 6px 16px; }
+
+.overlay-pad-none { padding-left: 0; padding-right: 0; }
+.overlay-pad-sm   { padding-left: 8px; padding-right: 8px; }
+.overlay-pad-md   { padding-left: 12px; padding-right: 12px; }
+
+/* 主题整页动画 —— 实际 keyframe 见 src/styles/animations.scss */
+.themeSwitchBlur,
+.themeSwitchScale,
+.themeSwitchSlide,
+.themeSwitchExpand,
+.themeShimmer,
+.themeColorMatrix,
+.themeFlash,
+.themeFadePulse,
+.themeTransitioning,
+.themeTransitionFast,
+.themeTransitionSlow,
+.themeTransitionNone {
+  /* 详情见 animations.scss / themes.scss */
+}

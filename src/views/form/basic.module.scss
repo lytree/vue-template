@@ -1,0 +1,14 @@
+.selectFull .el-select {
+  width: 100% !important;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 8px;
+}
+
+.priorityHint {
+  margin-left: 8px;
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}

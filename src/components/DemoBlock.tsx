@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import * as u from '@/styles/utility.css'
-import * as s from './DemoBlock.css'
+import s from './DemoBlock.module.scss'
 
 /**
  * 组件示例卡片：统一「标题 /说明 / 预览区 / 易错点」的排版。

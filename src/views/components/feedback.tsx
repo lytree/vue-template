@@ -19,7 +19,7 @@ import {
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
 import * as u from '@/styles/utility.css'
-import * as s from './feedback.css'
+import s from './feedback.module.scss'
 
 export default defineComponent({
   name: 'ComponentsFeedbackPage',

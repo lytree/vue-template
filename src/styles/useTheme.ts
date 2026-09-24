@@ -1,46 +1,60 @@
 /**
- * 主题切换的运行时 helper —— 桥接 Pinia store 与 vanilla-extract 主题系统
+ * 主题切换的运行时 helper —— SCSS Modules 版
+ *
+ * 与 vanilla-extract 版本差异：
+ *   • 没有「vanilla-extract 编译生成的 hash className」（如 themes.dark / themeTransitioning）
+ *   • 整页动画的 className（themeFadePulse / themeSwitchBlur / ...）改由
+ *     src/styles/animations.scss 提供（全局普通 CSS，keyframe + 简单 className）
+ *   • 业务 TSX 只通过 `class="themeFadePulse"` / `class="themeSwitchBlur"` 使用
  *
  * 用法：
- *   // stores/modules/app.ts
- *   import { setTheme, themeOptions } from '@/styles/useTheme'
- *   import { defineStore } from 'pinia'
- *
- *   export const useAppStore = defineStore('app', {
- *     state: () => ({
- *       themeName: 'light' as ThemeName,  // 'light' | 'dark' | 'brand' | 'accent'
- *     }),
- *     actions: {
- *       toggleTheme() {
- *         this.themeName = this.themeName === 'light' ? 'dark' : 'light'
- *         setTheme(this.themeName)
- *       },
- *     },
- *   })
- *
- *   // main.tsx
- *   import { useAppStore } from '@/stores/modules/app'
- *   const app = useAppStore()
- *   setTheme(app.themeName) // 应用初始主题
- *
- *   // TSX 组件
- *   import { useTheme } from '@/styles/useTheme'
- *   const { theme, themeName, setTheme } = useTheme()
- *   <button onClick={() => setTheme('dark')}>切换暗色</button>
- *   <section class={theme}>{themeContract.color} 是当前主色</section>
+ *   import { setTheme, useTheme, themeOptions } from '@/styles/useTheme'
+ *   const { theme, setTheme } = useTheme()
+ *   <section class={theme}>当前主题子树</section>
  */
 import { computed, ref } from 'vue'
-import {
-  themes,
-  themeTransitioning,
-  themeFlash,
-  themeAnimations,
-  type ThemeName,
-  type ThemeAnimationName,
-} from './utility.css'
 
-// Re-export 让业务方直接从 useTheme 拿主题类型（避免 import 路径分裂）
-export type { ThemeName, ThemeAnimationName }
+export type ThemeName = 'light' | 'dark' | 'brand' | 'accent'
+export type ThemeAnimationName =
+  | 'fade'
+  | 'blur'
+  | 'scale'
+  | 'slide'
+  | 'expand'
+  | 'flash'
+  | 'shimmer'
+  | 'matrix'
+
+/**
+ * 主题 className（vanilla-extract 版的 `themes` 对象 → 改用常量字符串）。
+ * 业务 TSX 通过 `<section class={theme}>` 即可拿到当前主题子树作用域。
+ * ⚠️ 与 vanilla-extract 不同：这些不是 hash 编译产物，需要业务类名配合
+ * （实际 CSS 在 src/styles/themes.scss 提供）。
+ */
+export const themes: Record<ThemeName, string> = {
+  light: 'theme-light',
+  dark: 'theme-dark',
+  brand: 'theme-brand',
+  accent: 'theme-accent',
+}
+
+/** 8 套整页动画 className —— 实际 keyframe 在 src/styles/animations.scss */
+export const themeAnimations: Record<ThemeAnimationName, string> = {
+  fade: 'theme-fade-pulse',
+  blur: 'theme-switch-blur',
+  scale: 'theme-switch-scale',
+  slide: 'theme-switch-slide',
+  expand: 'theme-switch-expand',
+  flash: 'theme-flash',
+  shimmer: 'theme-shimmer',
+  matrix: 'theme-color-matrix',
+}
+
+/** 主题过渡启用标记（setTheme 调用瞬间挂在 <html> 上） */
+export const themeTransitioning = 'theme-transitioning'
+
+/** 整页闪烁（triggerThemeFlash 调用瞬间挂在 body 上） */
+export const themeFlash = 'theme-flash'
 
 /** 主题选项列表 —— 业务层遍历得到所有可选主题 */
 export const themeOptions: ReadonlyArray<{
@@ -54,46 +68,20 @@ export const themeOptions: ReadonlyArray<{
   { name: 'accent', label: '强调', description: '紫红色，适合演示或内嵌卡片' },
 ]
 
-/**
- * 全局主题状态（跨组件响应式） —— Vue 单例 ref
- */
 const currentTheme = ref<ThemeName>('light')
-
-/** 主题过渡持续时间（ms） —— 主题切换时让 CSS 变量走这个时长 */
 const THEME_TRANSITION_MS = 350
 
-/** setTheme 的可选项 */
 export interface SetThemeOptions {
-  /** 是否启用过渡（默认 true） */
   animate?: boolean
-  /** 自定义过渡时长（ms），覆盖默认 350 */
   duration?: number
-  /** 自定义缓动函数 */
   easing?: string
-  /** 是否触发 @view-transition 整页淡入淡出（Chrome 111+；默认 false） */
   viewTransition?: boolean
-  /** 切换瞬间的整页动画类型（默认 'fade'） */
   animation?: ThemeAnimationName | false
-  /** 自定义过渡 class —— 传字符串覆盖默认 */
   bodyClass?: string
-  /** 点击位置（用于 ripple/expand 动画）。默认屏幕中心 */
   originX?: number
   originY?: number
 }
 
-/**
- * setTheme(...) —— 切换全局主题，返回 Promise<ThemeName> 等动画完成。
- *
- * 实现步骤（按顺序）：
- *   1. 在 `<html>` 上挂 `themeTransitioning` className（启用 --theme-transition）
- *   2. 在 `<body>` 上挂 `themeAnimations[animation]` —— 整页动画
- *   3. 切换主题 className
- *   4. 时长到了清理 className + resolve()
- *
- * 同时联动项目已有的「html.dark」机制（避免冲突）：
- *   • light / brand / accent  → 移除 .dark class
- *   • dark                     → 创建新的 .dark class
- */
 export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): Promise<ThemeName> {
   const {
     animate = true,
@@ -111,34 +99,28 @@ export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): Promise<T
   const root = document.documentElement
   const body = document.body
 
-  /** 内部：实际切换动作（被 viewTransition 包裹或直接执行） */
   const apply = () => {
     if (animate) {
-      // 临时覆盖 CSS 变量（如果传了自定义 duration / easing）
       if (duration !== THEME_TRANSITION_MS || easing !== 'cubic-bezier(0.4, 0, 0.2, 1)') {
         root.style.setProperty('--theme-transition-duration', `${duration}ms`)
         root.style.setProperty('--theme-transition-easing', easing)
       }
       root.classList.add(themeTransitioning)
 
-      // body 上挂切换动画（默认 fadePulse）
       if (body) {
         const animClass = bodyClass ?? (animation && themeAnimations[animation])
         if (animClass) {
           body.classList.add(animClass)
-          // 不同动画时长差异：取最长的覆盖时间
           const maxAnimMs = Math.max(duration, getAnimMaxDuration(animation))
           window.setTimeout(() => body.classList.remove(animClass), maxAnimMs + 50)
         }
 
-        // 给 expand / ripple 动画设置点击位置
         if (originX !== undefined && originY !== undefined) {
           root.style.setProperty('--theme-ripple-x', `${originX}px`)
           root.style.setProperty('--theme-ripple-y', `${originY}px`)
         }
       }
 
-      // 过渡结束后清理 + resolve
       window.setTimeout(() => {
         root.classList.remove(themeTransitioning)
         root.style.removeProperty('--theme-transition-duration')
@@ -156,10 +138,8 @@ export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): Promise<T
   }
 
   return new Promise<ThemeName>((resolve) => {
-    // 当前 setTheme 的 resolve 函数挂到全局
     pendingResolve = resolve
 
-    // 可选：用浏览器原生 @view-transition 包裹
     if (
       viewTransition &&
       typeof (document as { startViewTransition?: unknown }).startViewTransition === 'function'
@@ -174,7 +154,6 @@ export function setTheme(name: ThemeName, opts: SetThemeOptions = {}): Promise<T
   })
 }
 
-/** 同步立即切换（不返回 Promise 的 fire-and-forget 版本，给内部 useTheme 用） */
 export function setThemeSync(name: ThemeName): void {
   currentTheme.value = name
   if (typeof document === 'undefined') return
@@ -183,7 +162,6 @@ export function setThemeSync(name: ThemeName): void {
   else document.documentElement.classList.remove('dark')
 }
 
-/** 当前 setTheme 的 resolve 函数 —— setTheme 完成后调一次 */
 let pendingResolve: ((value: ThemeName) => void) | null = null
 function resolveThemeTransition(name: ThemeName): void {
   if (pendingResolve) {
@@ -192,10 +170,8 @@ function resolveThemeTransition(name: ThemeName): void {
   }
 }
 
-/** 取动画最大时长（用于清理 timer） */
 function getAnimMaxDuration(name: ThemeAnimationName | false): number {
   if (!name) return 0
-  // 简单硬编码（与 utility.css.ts 里的 animationDuration 对齐）
   const map: Record<ThemeAnimationName, number> = {
     fade: 200,
     blur: 400,
@@ -209,7 +185,6 @@ function getAnimMaxDuration(name: ThemeAnimationName | false): number {
   return map[name]
 }
 
-/** 把主题 className 实际挂到 <html> 上（清掉旧主题 + 应用新主题） */
 function applyThemeClass(root: HTMLElement, name: ThemeName): void {
   root.classList.remove(themes.light, themes.dark, themes.brand, themes.accent)
   if (name !== 'light') root.classList.add(themes[name])
@@ -217,13 +192,6 @@ function applyThemeClass(root: HTMLElement, name: ThemeName): void {
   else root.classList.remove('dark')
 }
 
-/**
- * `triggerThemeFlash()` —— 在主题切换的瞬间，让整页闪一下半透明黑。
- * 用于「让用户明确感知切了」的场景（默认关闭）。
- *
- * 用法：
- *   <button onClick={() => { setTheme('dark'); triggerThemeFlash() }}>切换</button>
- */
 export function triggerThemeFlash(durationMs = 200): void {
   if (typeof document === 'undefined') return
   const body = document.body
@@ -232,15 +200,6 @@ export function triggerThemeFlash(durationMs = 200): void {
   window.setTimeout(() => body.classList.remove(themeFlash), durationMs)
 }
 
-/**
- * `beginThemeTransition(opts)` —— 不切换主题，只启动一次主题过渡动画。
- * 给路由切换 / 弹窗打开等场景用：手动让页面"主题过渡"一波，
- * 而不实际切主题。
- *
- * 用法：
- *   beginThemeTransition({ duration: 200 })
- *   // 200ms 后自动清理
- */
 export function beginThemeTransition(opts: { duration?: number } = {}): void {
   if (typeof document === 'undefined') return
   const root = document.documentElement
@@ -253,24 +212,10 @@ export function beginThemeTransition(opts: { duration?: number } = {}): void {
   }, duration + 50)
 }
 
-/**
- * `getTheme()` —— 同步读取当前主题（仅在 setup 之外有用，组件内请用 useTheme）
- */
 export function getTheme(): ThemeName {
   return currentTheme.value
 }
 
-/**
- * `useTheme()` —— 在 Vue setup 中使用，返回响应式主题状态。
- *
- * 返回：
- *   • theme        —— 当前主题的 className（class={theme}）
- *   • themeName    —— 响应式主题名（computed）
- *   • setTheme     —— 切换主题（返回 Promise<ThemeName>）
- *   • isDark       —— 是否为暗色模式
- *   • toggleTheme  —— 在 light / dark 之间切换（返回 Promise<ThemeName>）
- *   • isTransitioning —— 当前是否正在过渡
- */
 export function useTheme() {
   const themeName = computed(() => currentTheme.value)
   const theme = computed(() => themes[currentTheme.value])
@@ -300,7 +245,6 @@ export function useTheme() {
   }
 }
 
-/** 兜底：把主题初始化到 light（避免 SSR / 测试环境报错） */
 export function initTheme(initial: ThemeName = 'light'): void {
   setTheme(initial)
 }

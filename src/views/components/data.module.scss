@@ -1,0 +1,130 @@
+/* Components Data 私有样式 */
+
+.badgeSlot {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--ant-color-fill-tertiary);
+  font-size: 14px;
+}
+
+.progressWrap {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progressCircleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+.skeletonRow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.skeletonInline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeletonTextCol {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carousel {
+  width: 100%;
+  max-width: 576px;
+  border-radius: var(--ant-border-radius);
+}
+
+.carouselSlide {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #fff;
+}
+
+.imageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.maxWmd {
+  max-width: 448px;
+}
+
+.maxWxl {
+  max-width: 576px;
+}
+
+.treeV2Box {
+  max-width: 448px;
+  overflow: hidden;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.cardRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cardSmall {
+  width: 256px;
+}
+
+.cardBody {
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.cardHeader {
+  font-weight: 500;
+}
+
+.avatarPrimary {
+  background-color: var(--ant-color-primary);
+  color: #fff;
+}
+
+.avatarSuccess {
+  background-color: var(--ant-color-success);
+  color: #fff;
+}
+
+.textSmSecondary {
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.countdown {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.calendarBox {
+  max-width: 768px;
+}
+
+.calendarDay {
+  text-align: center;
+  font-size: 12px;
+}

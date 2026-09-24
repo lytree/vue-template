@@ -15,7 +15,7 @@ import {
 } from 'element-plus'
 import PageContainer from '@/components/PageContainer'
 import * as u from '@/styles/utility.css'
-import * as s from './basic.css'
+import s from './basic.module.scss'
 
 interface FormModel {
   name: string

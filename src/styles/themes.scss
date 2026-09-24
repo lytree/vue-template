@@ -1,0 +1,99 @@
+/* ============================================================================
+   主题子树作用域 CSS —— 4 套主题（light / dark / brand / accent）
+   ============================================================================
+   业务代码：<section class="theme-dark">...子树...</section>
+   子树内引用 --theme-* 的 CSS 变量会重新解析（来自 tokens.scss）。
+   注：dark mode 也兼容 <html class="dark">（见 :root.dark）
+   ============================================================================ */
+
+/* 1. light —— 默认（等同于 :root 默认值，无需重写） */
+
+/* 2. dark —— 挂在 .theme-dark 子树上，覆写 --theme-* 变量 */
+.theme-dark {
+  --theme-color: #177ddc;
+  --theme-bg: #141414;
+  --theme-text: rgba(255, 255, 255, 0.85);
+  --theme-text-secondary: rgba(255, 255, 255, 0.65);
+  --theme-border: #424242;
+  --theme-success: #49aa19;
+  --theme-warning: #d89614;
+  --theme-error: #dc4446;
+  --theme-ring-color: #177ddc;
+  --theme-gradient-from: #177ddc;
+  --theme-gradient-via: #3c9ae8;
+  --theme-gradient-to: #5db1f3;
+  /* antd 令牌同步 */
+  --ant-color-text: rgba(255, 255, 255, 0.85);
+  --ant-color-text-secondary: rgba(255, 255, 255, 0.65);
+  --ant-color-bg-container: #141414;
+  --ant-color-bg-layout: #000000;
+  --ant-color-bg-elevated: #1f1f1f;
+  --ant-color-border: #424242;
+}
+
+/* 3. brand —— 营销页面 / 渐变紫色 */
+.theme-brand {
+  --theme-color: #722ed1;
+  --theme-bg: linear-gradient(135deg, #722ed1 0%, #1677ff 100%);
+  --theme-text: #ffffff;
+  --theme-text-secondary: rgba(255, 255, 255, 0.75);
+  --theme-border: #9254de;
+  --theme-success: #52c41a;
+  --theme-warning: #faad14;
+  --theme-error: #ff4d4f;
+  --theme-ring-color: #722ed1;
+  --theme-gradient-from: #722ed1;
+  --theme-gradient-via: #a855f7;
+  --theme-gradient-to: #1677ff;
+}
+
+/* 4. accent —— 演示 / 内嵌卡片（紫红色） */
+.theme-accent {
+  --theme-color: #eb2f96;
+  --theme-bg: #fff0f6;
+  --theme-text: #c41d7f;
+  --theme-text-secondary: #eb2f96;
+  --theme-border: #ffadd2;
+  --theme-success: #52c41a;
+  --theme-warning: #faad14;
+  --theme-error: #ff4d4f;
+  --theme-ring-color: #eb2f96;
+  --theme-gradient-from: #eb2f96;
+  --theme-gradient-via: #f759ab;
+  --theme-gradient-to: #ff85c0;
+}
+
+/* 主题感知 utility —— 业务代码直接 class="theme-primary-bg" 等使用 */
+.theme-primary {
+  color: var(--theme-color);
+}
+.theme-bg-primary {
+  background-color: var(--theme-color);
+  color: #fff;
+}
+.theme-text-primary {
+  color: var(--theme-color);
+}
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+.theme-border-primary {
+  border-color: var(--theme-border);
+}
+.theme-bg-container {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+.theme-ring {
+  box-shadow: 0 0 0 var(--theme-ring-width) var(--theme-ring-color);
+}
+.theme-ring-inner {
+  box-shadow: inset 0 0 0 var(--theme-ring-width) var(--theme-ring-color);
+}
+.theme-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--theme-gradient-from),
+    var(--theme-gradient-to)
+  );
+}

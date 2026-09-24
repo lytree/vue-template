@@ -35,7 +35,7 @@ import {
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
 import * as u from '@/styles/utility.css'
-import * as s from './data.css'
+import s from './data.module.scss'
 
 interface Row {
   id: number

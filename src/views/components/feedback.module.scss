@@ -1,0 +1,68 @@
+/* Components Feedback 私有样式 */
+
+.alertStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loadingBoxStyle {
+  margin-top: 16px;
+  display: flex;
+  height: 96px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.noteText {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.noteCode {
+  background-color: var(--ant-color-fill-tertiary);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 13px;
+}
+
+.dialogFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.textSmSecondary {
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.popoverText {
+  font-size: 14px;
+}
+
+.tourAnchors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.tourAnchor {
+  border-radius: var(--ant-border-radius);
+  border: 1px dashed var(--ant-color-border);
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.resultRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}

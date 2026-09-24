@@ -29,7 +29,7 @@ import {
 import { buildMenu, type MenuItem } from './menu'
 import { useAppStore, useUserStore } from '@/stores'
 import * as u from '@/styles/utility.css'
-import * as s from './BasicLayout.css'
+import s from './BasicLayout.module.scss'
 
 export default defineComponent({
   name: 'BasicLayout',

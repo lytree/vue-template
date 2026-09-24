@@ -1,0 +1,101 @@
+/* ============================================================================
+   全局样式（reset + scrollbar + body + 主题过渡）
+   ============================================================================
+   只写「项目级别」的全局样式 —— 真正的视图 / 组件级样式走 SCSS Modules。
+   ============================================================================ */
+
+/* ============================ Reset ============================ */
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  line-height: 1.5715;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--ant-color-bg-layout);
+  color: var(--ant-color-text);
+}
+
+/* ============================ Scrollbar ============================ */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* ============================ 主题切换全局过渡 ============================
+   useTheme.setTheme 调用时挂 themeTransitioning className，
+   让 --theme-transition-duration 临时变非零，所有主题感知属性平滑过渡。
+   切换结束后清回 0ms，不影响 hover 等其他动画性能。
+   ============================================================================ */
+:root {
+  --theme-transition-duration: 0ms;
+}
+
+* {
+  transition-duration: var(--theme-transition-duration);
+  transition-property:
+    background-color, color, border-color, fill, stroke, box-shadow;
+  transition-timing-function: var(--theme-transition-easing);
+}
+
+/* ============================ Element Plus 主色覆盖 ============================ */
+.el-button--primary {
+  background-color: #1677ff;
+  border-color: #1677ff;
+}
+.el-button--primary:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+/* ============================ prefers-reduced-motion 适配 ============================ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-transition-duration: 0ms;
+  }
+}
+
+/* ============================ 路由过渡 ============================ */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

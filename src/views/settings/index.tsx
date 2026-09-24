@@ -3,7 +3,7 @@ import { ElSwitch } from 'element-plus'
 import PageContainer from '@/components/PageContainer'
 import { useAppStore } from '@/stores'
 import * as u from '@/styles/utility.css'
-import * as s from './index.css'
+import s from './index.module.scss'
 
 const TOKENS = [
   { name: '--ant-color-primary', value: '#1677ff', note: '品牌主色 / 链接 / 选中态' },

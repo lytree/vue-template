@@ -17,7 +17,7 @@ import {
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import PageContainer from '@/components/PageContainer'
 import * as u from '@/styles/utility.css'
-import * as s from './table.css'
+import s from './table.module.scss'
 
 type Status = 'active' | 'pending' | 'disabled'
 

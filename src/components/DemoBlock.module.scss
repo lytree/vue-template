@@ -1,0 +1,26 @@
+/* DemoBlock 的预览区容器，根据 block prop 切换行内/块级布局 */
+
+.previewInline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.previewBlock {
+  padding: 20px;
+}
+
+.headerBorder {
+  border-bottom: 1px solid var(--ant-color-border-secondary);
+  padding: 12px 20px;
+}
+
+.footerBorder {
+  border-top: 1px solid var(--ant-color-border-secondary);
+  background-color: var(--ant-color-fill-quaternary);
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}

@@ -1,68 +1,68 @@
-/* ============================================================
-   设计令牌（CSS 变量）
-   ------------------------------------------------------------
-   这是项目中唯一的 .css 文件，承载：
-     · 全局 CSS 变量（暗色模式由 <html class="dark"> 切换）
-     · Element Plus / Ant Design 语义令牌映射
-     · 字体族、过渡曲线等全局基础值
-   其它组件级样式全部由 Linaria 在 .tsx 里写。
-   ============================================================ */
+/* ============================================================================
+   设计令牌（CSS 变量） —— SCSS 静态版本
+   ============================================================================
+   这是项目里所有设计令牌的「唯一源」。
+   • 浅色 / 暗色：通过 `<html class="dark">` 自动切换
+   • Element Plus：把 --el-* 映射到 --ant-* 系列
+   • 业务组件：通过 `var(--ant-color-*)` 引用
 
-/* ============================================================
-   1. Ant Design 5 设计令牌（变量层）
-   ============================================================ */
+   注意：
+   • 不要直接写 hex —— 改这里全站生效
+   • dark mode 用同名变量在 `.dark` 选择器里覆盖
+   ============================================================================ */
+
 :root {
   color-scheme: light;
 
-  /* --- 品牌主色（antd blue-6） --- */
+  /* 品牌主色（antd blue-6） */
   --ant-color-primary: #1677ff;
   --ant-color-primary-hover: #4096ff;
   --ant-color-primary-active: #0958d9;
   --ant-color-primary-bg: #e6f4ff;
   --ant-color-primary-border: #91caff;
 
-  /* --- 功能色 --- */
+  /* 功能色 */
   --ant-color-success: #52c41a;
   --ant-color-warning: #faad14;
   --ant-color-error: #ff4d4f;
   --ant-color-info: #1677ff;
 
-  /* --- 文字 --- */
+  /* 文本 */
   --ant-color-text: rgba(0, 0, 0, 0.88);
   --ant-color-text-secondary: rgba(0, 0, 0, 0.65);
   --ant-color-text-tertiary: rgba(0, 0, 0, 0.45);
   --ant-color-text-quaternary: rgba(0, 0, 0, 0.25);
   --ant-color-text-inverse: #ffffff;
 
-  /* --- 背景 --- */
+  /* 背景 */
   --ant-color-bg-container: #ffffff;
   --ant-color-bg-layout: #f5f5f5;
   --ant-color-bg-elevated: #ffffff;
   --ant-color-bg-spotlight: rgba(0, 0, 0, 0.85);
   --ant-color-bg-mask: rgba(0, 0, 0, 0.45);
 
-  /* --- 描边 --- */
+  /* 描边 */
   --ant-color-border: #d9d9d9;
   --ant-color-border-secondary: #f0f0f0;
   --ant-color-split: rgba(5, 5, 5, 0.06);
 
-  /* --- 填充 --- */
+  /* 填充 */
   --ant-color-fill: rgba(0, 0, 0, 0.15);
   --ant-color-fill-secondary: rgba(0, 0, 0, 0.06);
   --ant-color-fill-tertiary: rgba(0, 0, 0, 0.04);
   --ant-color-fill-quaternary: rgba(0, 0, 0, 0.02);
 
-  /* --- 圆角 --- */
+  /* 圆角 */
   --ant-border-radius-sm: 4px;
   --ant-border-radius: 6px;
   --ant-border-radius-lg: 8px;
 
-  /* --- 控件尺寸 --- */
+  /* 控件尺寸 */
   --ant-control-height-sm: 24px;
   --ant-control-height: 32px;
   --ant-control-height-lg: 40px;
 
-  /* --- 阴影 --- */
+  /* 阴影 */
   --ant-box-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
     0 2px 4px 0 rgba(0, 0, 0, 0.02);
@@ -70,41 +70,12 @@
     0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
 
-  /* --- 布局尺寸 --- */
+  /* 布局尺寸 */
   --ant-layout-sider-width: 224px;
   --ant-layout-sider-collapsed-width: 64px;
   --ant-layout-header-height: 56px;
-}
 
-.dark {
-  color-scheme: dark;
-
-  --ant-color-text: rgba(255, 255, 255, 0.85);
-  --ant-color-text-secondary: rgba(255, 255, 255, 0.65);
-  --ant-color-text-tertiary: rgba(255, 255, 255, 0.45);
-  --ant-color-text-quaternary: rgba(255, 255, 255, 0.25);
-
-  --ant-color-bg-container: #141414;
-  --ant-color-bg-layout: #000000;
-  --ant-color-bg-elevated: #1f1f1f;
-
-  --ant-color-border: #424242;
-  --ant-color-border-secondary: #303030;
-  --ant-color-split: rgba(253, 253, 253, 0.12);
-
-  --ant-color-fill: rgba(255, 255, 255, 0.18);
-  --ant-color-fill-secondary: rgba(255, 255, 255, 0.12);
-  --ant-color-fill-tertiary: rgba(255, 255, 255, 0.08);
-  --ant-color-fill-quaternary: rgba(255, 255, 255, 0.04);
-
-  --ant-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.24), 0 1px 6px -1px rgba(0, 0, 0, 0.16);
-  --ant-box-shadow-secondary: 0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 3px 6px -4px rgba(0, 0, 0, 0.48);
-}
-
-/* ============================================================
-   2. Element Plus 变量映射
-   ============================================================ */
-:root {
+  /* ===== Element Plus 映射到 antd 令牌 ===== */
   --el-color-primary: #1677ff;
   --el-color-primary-light-3: #4096ff;
   --el-color-primary-light-5: #91caff;
@@ -189,22 +160,66 @@
   --el-component-size-large: 40px;
 
   --el-font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --el-font-size-base: 14px;
 
-  --el-box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-  --el-box-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --el-box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --el-box-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   --el-box-shadow-lighter: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --el-box-shadow-dark: 0 6px 16px 0 rgba(0, 0, 0, 0.12), 0 3px 6px -4px rgba(0, 0, 0, 0.16);
+  --el-box-shadow-dark: 0 6px 16px 0 rgba(0, 0, 0, 0.12),
+    0 3px 6px -4px rgba(0, 0, 0, 0.16);
+
+  /* ===== 主题切换动画 CSS 变量（useTheme.ts 注入） ===== */
+  --theme-transition-duration: 0ms;
+  --theme-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-color: #1677ff;
+  --theme-bg: #ffffff;
+  --theme-text: rgba(0, 0, 0, 0.88);
+  --theme-text-secondary: rgba(0, 0, 0, 0.65);
+  --theme-border: #d9d9d9;
+  --theme-success: #52c41a;
+  --theme-warning: #faad14;
+  --theme-error: #ff4d4f;
+  --theme-ring-color: #3b82f6;
+  --theme-ring-width: 3px;
+  --theme-ring-opacity: 0.5;
+  --theme-gradient-from: #1677ff;
+  --theme-gradient-via: #69b1ff;
+  --theme-gradient-to: #bae0ff;
+  --theme-ripple-x: 50%;
+  --theme-ripple-y: 50%;
+  --theme-ripple-size: 1200px;
 }
 
-html.dark {
-  --el-color-primary: #1677ff;
-  --el-color-primary-light-3: #4096ff;
-  --el-color-primary-dark-2: #0958d9;
+/* ============================ Dark mode 覆盖 ============================ */
+.dark {
+  color-scheme: dark;
+
+  --ant-color-text: rgba(255, 255, 255, 0.85);
+  --ant-color-text-secondary: rgba(255, 255, 255, 0.65);
+  --ant-color-text-tertiary: rgba(255, 255, 255, 0.45);
+  --ant-color-text-quaternary: rgba(255, 255, 255, 0.25);
+
+  --ant-color-bg-container: #141414;
+  --ant-color-bg-layout: #000000;
+  --ant-color-bg-elevated: #1f1f1f;
+
+  --ant-color-border: #424242;
+  --ant-color-border-secondary: #303030;
+  --ant-color-split: rgba(253, 253, 253, 0.12);
+
+  --ant-color-fill: rgba(255, 255, 255, 0.18);
+  --ant-color-fill-secondary: rgba(255, 255, 255, 0.12);
+  --ant-color-fill-tertiary: rgba(255, 255, 255, 0.08);
+  --ant-color-fill-quaternary: rgba(255, 255, 255, 0.04);
+
+  --ant-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.24),
+    0 1px 6px -1px rgba(0, 0, 0, 0.16);
+  --ant-box-shadow-secondary: 0 6px 16px 0 rgba(0, 0, 0, 0.32),
+    0 3px 6px -4px rgba(0, 0, 0, 0.48);
 
   --el-text-color-primary: rgba(255, 255, 255, 0.85);
   --el-text-color-regular: rgba(255, 255, 255, 0.65);
@@ -231,24 +246,41 @@ html.dark {
   --el-fill-color-dark: rgba(255, 255, 255, 0.16);
   --el-fill-color-darker: rgba(255, 255, 255, 0.2);
   --el-fill-color-blank: #141414;
+
+  --el-color-primary: #177ddc;
+  --el-color-primary-light-3: #3c9ae8;
+  --el-color-primary-light-5: #5db1f3;
+  --el-color-primary-light-7: #7cc5f7;
+  --el-color-primary-light-8: #92d3fb;
+  --el-color-primary-light-9: #a8e1fc;
+  --el-color-primary-dark-2: #0858b2;
+
+  --theme-color: #177ddc;
+  --theme-bg: #141414;
+  --theme-text: rgba(255, 255, 255, 0.85);
+  --theme-text-secondary: rgba(255, 255, 255, 0.65);
+  --theme-border: #424242;
+  --theme-ring-color: #177ddc;
+  --theme-gradient-from: #177ddc;
+  --theme-gradient-via: #3c9ae8;
+  --theme-gradient-to: #5db1f3;
 }
 
-/* ============================================================
-   3. 路由过渡
-   ============================================================ */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(6px);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
+/* ============================================================================
+   spacing 步长 —— 4px 网格
+   ============================================================================ */
+:root {
+  --space-unit: 4px;
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0_5: calc(var(--space-unit) * 0.5); /*  2px */
+  --space-1: calc(var(--space-unit) * 1); /*  4px */
+  --space-2: calc(var(--space-unit) * 2); /*  8px */
+  --space-3: calc(var(--space-unit) * 3); /* 12px */
+  --space-4: calc(var(--space-unit) * 4); /* 16px */
+  --space-5: calc(var(--space-unit) * 5); /* 20px */
+  --space-6: calc(var(--space-unit) * 6); /* 24px */
+  --space-8: calc(var(--space-unit) * 8); /* 32px */
+  --space-10: calc(var(--space-unit) * 10); /* 40px */
+  --space-12: calc(var(--space-unit) * 12); /* 48px */
 }

@@ -1,0 +1,166 @@
+/* Components Basic 私有样式 */
+
+.cellDemo {
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--ant-color-fill-tertiary);
+  font-size: 14px;
+}
+
+.cellDemo40 {
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ant-border-radius);
+  background-color: var(--ant-color-fill-tertiary);
+  font-size: 14px;
+  width: 160px;
+}
+
+.containerBox {
+  height: 176px;
+  overflow: hidden;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.containerHeader {
+  background-color: var(--ant-color-fill-tertiary);
+  text-align: center;
+  font-size: 14px;
+  line-height: 60px;
+}
+
+.containerAside {
+  background-color: var(--ant-color-fill-secondary);
+  text-align: center;
+  font-size: 14px;
+  line-height: 116px;
+}
+
+.containerMain {
+  text-align: center;
+  font-size: 14px;
+}
+
+.containerFooter {
+  background-color: var(--ant-color-fill-tertiary);
+  text-align: center;
+  font-size: 14px;
+  line-height: 60px;
+}
+
+.splitterBox {
+  height: 160px;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.splitterPanelA {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ant-color-fill-tertiary);
+  font-size: 14px;
+}
+
+.splitterPanelB {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ant-color-fill-quaternary);
+  font-size: 14px;
+}
+
+.scrollList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.scrollItem {
+  border-radius: var(--ant-border-radius-sm);
+  background-color: var(--ant-color-fill-quaternary);
+  padding: 6px 12px;
+}
+
+.watermarkBox {
+  height: 128px;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+  padding: 16px;
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.affixContainer {
+  height: 160px;
+  overflow-y: auto;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.affixBar {
+  width: 100%;
+  background-color: var(--ant-color-primary);
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+}
+
+.affixList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.affixListItem {
+  border-radius: var(--ant-border-radius-sm);
+  background-color: var(--ant-color-fill-quaternary);
+  padding: 6px 12px;
+}
+
+.configRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.configLabel {
+  width: 144px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.rowGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dividerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.truncatedText {
+  width: 150px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

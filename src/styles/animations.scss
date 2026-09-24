@@ -1,0 +1,194 @@
+/* ============================================================================
+   主题切换的整页动画 keyframes + className
+   ============================================================================
+   由 useTheme.setTheme 在 body 上挂对应 className 触发，
+   动画结束后 useTheme 会移除。
+   ============================================================================ */
+
+/* ----- 主题过渡启用标记（setTheme 调用瞬间挂在 <html> 上） ----- */
+.theme-transitioning {
+  --theme-transition-duration: 350ms;
+}
+
+/* ----- 1. theme-fade-pulse（默认动画，body 轻量淡入 200ms） ----- */
+@keyframes themeFadePulseKeyframes {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.theme-fade-pulse {
+  animation-name: themeFadePulseKeyframes;
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+}
+
+/* ----- 2. theme-switch-blur（整页模糊 → 清晰 400ms） ----- */
+@keyframes themeSwitchBlurKeyframes {
+  from {
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+.theme-switch-blur {
+  animation-name: themeSwitchBlurKeyframes;
+  animation-duration: 400ms;
+  animation-timing-function: ease-out;
+}
+
+/* ----- 3. theme-switch-scale（整页轻微缩放 + overshoot 350ms） ----- */
+@keyframes themeSwitchScaleKeyframes {
+  from {
+    transform: scale(0.98);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.theme-switch-scale {
+  animation-name: themeSwitchScaleKeyframes;
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ----- 4. theme-switch-slide（整页从下滑入 400ms） ----- */
+@keyframes themeSwitchSlideKeyframes {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.theme-switch-slide {
+  animation-name: themeSwitchSlideKeyframes;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ----- 5. theme-switch-expand（Material You 圆形扩散 600ms） ----- */
+@keyframes themeSwitchExpandKeyframes {
+  from {
+    clip-path: circle(0% at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%));
+  }
+  to {
+    clip-path: circle(
+      150% at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%)
+    );
+  }
+}
+.theme-switch-expand {
+  animation-name: themeSwitchExpandKeyframes;
+  animation-duration: 600ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ----- 6. theme-flash（全屏半透明闪烁 200ms） ----- */
+@keyframes themeFlashKeyframes {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+.theme-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  animation-name: themeFlashKeyframes;
+  animation-duration: 200ms;
+}
+
+/* ----- 7. theme-shimmer（iOS 风金色光带扫过 700ms） ----- */
+@keyframes themeShimmerKeyframes {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.theme-shimmer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 60%
+  );
+  background-repeat: no-repeat;
+  animation-name: themeShimmerKeyframes;
+  animation-duration: 700ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* ----- 8. theme-color-matrix（hue-rotate 色调偏移 500ms） ----- */
+@keyframes themeColorMatrixKeyframes {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(30deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
+}
+.theme-color-matrix {
+  animation-name: themeColorMatrixKeyframes;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* ----- Sun/Moon 切换按钮图标旋转 ----- */
+@keyframes themeIconSpinKeyframes {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.theme-icon-rotate {
+  animation-name: themeIconSpinKeyframes;
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes themeIconAppearKeyframes {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+.theme-icon-appear {
+  animation-name: themeIconAppearKeyframes;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ----- 浏览器原生 view-transition（Chrome 111+） ----- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+}

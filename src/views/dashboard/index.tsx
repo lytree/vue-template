@@ -14,7 +14,7 @@ import PageContainer from '@/components/PageContainer'
 import StatCard from '@/components/StatCard'
 import { useUserStore } from '@/stores'
 import * as u from '@/styles/utility.css'
-import * as s from './index.css'
+import s from './index.module.scss'
 
 const STATS = [
   { label: '今日活跃用户', value: '12,846', suffix: '人', trend: 12.4, icon: User, tone: 'primary' as const },

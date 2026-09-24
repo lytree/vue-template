@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElButton } from 'element-plus'
 import * as u from '@/styles/utility.css'
-import * as s from './404.css'
+import s from './404.module.scss'
 
 export default defineComponent({
   name: 'NotFoundPage',

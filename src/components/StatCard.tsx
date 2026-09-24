@@ -3,7 +3,15 @@ import type { Component, PropType } from 'vue'
 import { ElIcon } from 'element-plus'
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import * as u from '@/styles/utility.css'
-import * as s from './StatCard.css'
+import s from './StatCard.module.scss'
+
+/** tone → className 映射（与 SCSS Modules 中同名 class 一一对应） */
+const toneBg: Record<'primary' | 'success' | 'warning' | 'error', string> = {
+  primary: s.primary,
+  success: s.success,
+  warning: s.warning,
+  error: s.error,
+}
 
 export default defineComponent({
   name: 'StatCard',
@@ -30,7 +38,7 @@ export default defineComponent({
             <span class={`${u.textSm} ${u.textTextSecondary}`}>{props.label}</span>
             {Icon ? (
               <div
-                class={`${u.flex} ${u.size9} ${u.shrink0} ${u.itemsCenter} ${u.justifyCenter} ${u.rounded} ${u.textLg} ${s.toneBg[props.tone]}`}
+                class={`${u.flex} ${u.size9} ${u.shrink0} ${u.itemsCenter} ${u.justifyCenter} ${u.rounded} ${u.textLg} ${toneBg[props.tone]}`}
               >
                 <ElIcon>{h(Icon)}</ElIcon>
               </div>

@@ -42,7 +42,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
 import * as u from '@/styles/utility.css'
-import * as s from './form.css'
+import s from './form.module.scss'
 
 const CASCADER_OPTIONS = [
   {

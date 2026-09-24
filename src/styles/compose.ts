@@ -14,8 +14,6 @@
  *     localStyle,                                // ← 业务 style() 输出
  *   )
  */
-import { style } from '@vanilla-extract/css'
-
 /**
  * `compose(...args)` —— 把多个 style class 拼接成一个 class 字符串。
  *
@@ -49,28 +47,33 @@ export function compose(
 export const cx = compose
 
 /**
- * `mergeProps(...)` —— 把多个 style() 输出 + inline style 对象合并。
+ * `mergeProps(...)` —— 合并多个 inline style 对象 + 任意 className 字符串。
  *
- * 与 compose 的区别：mergeProps 透传给 vanilla-extract 的 `style()`，
- * 会为每个合并产物生成一个独立的 hash class（在 vanilla-extract 看来是合法的）。
+ * 与 compose 的区别：mergeProps 接受 inline style 对象作为输入，
+ * 返回值是 `{ class: string, style: Record<string, unknown> }` —— 业务可以直接
+ * 解构到 v-bind 风格的 JSX 上。
  *
  * 用法：
- *   const wrapper = mergeProps(
- *     sprinkles({ p: '4' }),
- *     { maxWidth: '600px', opacity: 0.9 },
- *     myLocalStyle,
- *   )
+ *   <div {...mergeProps('a b', { color: 'red' }, s.root)} />
  */
-export function mergeProps<
-  P extends ReadonlyArray<string | Record<string, unknown> | false | null | undefined>,
->(...parts: P): string {
-  const valid = parts.filter(
-    (p): p is string | Record<string, unknown> => Boolean(p) && typeof p === 'object',
-  ) as Array<string | Record<string, unknown>>
-  // style() 是 vanilla-extract 编译期 API，
-  // 接受 (base: object | string, ...styles: Array<object | string>) → string
-  // 这里把它当泛型函数调用，绕过 TS 重载的精确类型校验
-  return (style as unknown as (...a: unknown[]) => string)(...valid)
+export interface MergedProps {
+  class: string
+  style: Record<string, unknown>
+}
+export function mergeProps(
+  ...parts: Array<string | Record<string, unknown> | false | null | undefined>
+): MergedProps {
+  const classNames: string[] = []
+  const style: Record<string, unknown> = {}
+  for (const p of parts) {
+    if (!p) continue
+    if (typeof p === 'string') {
+      if (p) classNames.push(p)
+    } else if (typeof p === 'object') {
+      Object.assign(style, p)
+    }
+  }
+  return { class: classNames.join(' '), style }
 }
 
 /**

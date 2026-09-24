@@ -1,0 +1,42 @@
+/* StatCard 私有样式 —— 调色板（图标底色 + 文字色） */
+
+.baseTone {
+  border-radius: var(--ant-border-radius);
+  font-size: 18px;
+}
+
+.primary {
+  composes: baseTone;
+  background-color: var(--ant-color-primary-bg);
+  color: var(--ant-color-primary);
+}
+
+.success {
+  composes: baseTone;
+  background-color: #f6ffed;
+  color: var(--ant-color-success);
+
+  :global(.dark) & {
+    background-color: #162312;
+  }
+}
+
+.warning {
+  composes: baseTone;
+  background-color: #fffbe6;
+  color: var(--ant-color-warning);
+
+  :global(.dark) & {
+    background-color: #2b2111;
+  }
+}
+
+.error {
+  composes: baseTone;
+  background-color: #fff2f0;
+  color: var(--ant-color-error);
+
+  :global(.dark) & {
+    background-color: #2c1618;
+  }
+}

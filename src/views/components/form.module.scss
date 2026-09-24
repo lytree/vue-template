@@ -1,0 +1,85 @@
+/* Components Form 私有样式 */
+
+/* 表单 Select 全宽压过 Element Plus 默认 */
+.formSelectFull .el-select {
+  width: 100%;
+}
+
+.inputStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colorDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+}
+
+.colorSwatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--ant-border-radius-sm);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.colorCode {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+.sliderStack {
+  display: flex;
+  width: 100%;
+  max-width: 448px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.selectGroupRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.dateRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.radioStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uploadDrop {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--ant-border-radius);
+  border: 1px dashed var(--ant-color-border);
+  padding: 24px 32px;
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: var(--ant-color-primary);
+  }
+}

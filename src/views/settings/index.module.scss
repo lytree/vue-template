@@ -1,0 +1,14 @@
+.swatchBlock {
+  height: 40px;
+  width: 100%;
+  border-radius: var(--ant-border-radius-sm);
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+}

@@ -1,0 +1,52 @@
+.arrowIcon {
+  flex-shrink: 0;
+  color: var(--ant-color-text-quaternary);
+  transition: color 0.15s;
+}
+
+:global(.group:hover) .arrowIcon {
+  color: var(--ant-color-primary);
+}
+
+.trendHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--ant-color-border-secondary);
+  padding-top: 16px;
+  margin-top: 24px;
+}
+
+.trendLegend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.trendLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.barRow {
+  margin-top: 16px;
+  display: flex;
+  height: 128px;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.activityList {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activityItem {
+  display: flex;
+  gap: 12px;
+}

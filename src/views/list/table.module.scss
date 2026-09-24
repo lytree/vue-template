@@ -1,0 +1,27 @@
+.inputWrap {
+  width: 224px;
+}
+
+.actionGroup {
+  display: flex;
+  align-items: center;
+}
+
+.iconMr {
+  margin-right: 4px;
+}
+
+.paginationBar {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--ant-color-border-secondary);
+  padding: 12px 20px;
+}
+
+.amountCell {
+  font-variant-numeric: tabular-nums;
+}
+
+.formNoGapY .el-form-item {
+  margin-bottom: 0 !important;
+}
