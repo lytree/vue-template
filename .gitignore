@@ -23,3 +23,7 @@ pnpm-debug.log*
 
 *.tsbuildinfo
 .eslintcache
+
+# unplugin-vue-components / unplugin-auto-import 自动生成
+src/auto-imports.d.ts
+src/components.d.ts
