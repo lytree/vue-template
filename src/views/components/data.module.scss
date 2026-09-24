@@ -128,3 +128,27 @@
   text-align: center;
   font-size: 12px;
 }
+
+.infiniteBox {
+  display: flex;
+  max-height: 256px;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  border-radius: var(--ant-border-radius);
+  border: 1px solid var(--ant-color-border-secondary);
+  padding: 12px;
+}
+
+.infiniteItem {
+  border-radius: var(--ant-border-radius-sm);
+  background-color: var(--ant-color-fill-quaternary);
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.infiniteTip {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ant-color-text-tertiary);
+}

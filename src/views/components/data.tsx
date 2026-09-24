@@ -1,4 +1,5 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, withDirectives } from 'vue'
+import type { VNode } from 'vue'
 import {
   ElAutoResizer,
   ElAvatar,
@@ -17,6 +18,7 @@ import {
   ElEmpty,
   ElImage,
   ElImageViewer,
+  ElInfiniteScroll,
   ElPagination,
   ElProgress,
   ElSkeleton,
@@ -105,6 +107,29 @@ export default defineComponent({
     const calendarDate = ref(new Date())
     const treeChecked = ref<string[]>(['1-1'])
     const countdownTarget = Date.now() + 1000 * 60 * 60 * 26 + 1000 * 61
+
+    const infiniteItems = ref(
+      Array.from({ length: 12 }, (_, i) => ({ id: i + 1, label: `条目 ${i + 1}` })),
+    )
+    const infiniteLoading = ref(false)
+    const infiniteFinished = ref(false)
+
+    function loadMore() {
+      if (infiniteLoading.value || infiniteFinished.value) return
+      infiniteLoading.value = true
+      // 模拟接口请求延迟
+      window.setTimeout(() => {
+        const start = infiniteItems.value.length
+        infiniteItems.value.push(
+          ...Array.from({ length: 8 }, (_, i) => ({
+            id: start + i + 1,
+            label: `条目 ${start + i + 1}`,
+          })),
+        )
+        infiniteLoading.value = false
+        if (infiniteItems.value.length >= 36) infiniteFinished.value = true
+      }, 600)
+    }
 
     return () => (
       <PageContainer
@@ -484,6 +509,32 @@ export default defineComponent({
                     ),
                   }}
                 </ElCalendar>
+              </DemoBlock>
+
+              <DemoBlock
+                title="ElInfiniteScroll"
+                desc="无限滚动指令：容器滚到距底部不足一定像素时触发 load。vue-jsx 不支持自定义指令前缀，用 Vue 的 withDirectives 手动挂载。"
+                block
+              >
+                {withDirectives(
+                  (
+                    <div class={s.infiniteBox}>
+                      {infiniteItems.value.map((item) => (
+                        <div key={item.id} class={s.infiniteItem}>
+                          {item.label}
+                        </div>
+                      ))}
+                      {infiniteLoading.value ? (
+                        <div class={s.infiniteTip}>加载中…</div>
+                      ) : infiniteFinished.value ? (
+                        <div class={s.infiniteTip}>没有更多了</div>
+                      ) : (
+                        <div class={s.infiniteTip}>下滑加载更多</div>
+                      )}
+                    </div>
+                  ) as unknown as VNode,
+                  [[ElInfiniteScroll, loadMore]],
+                )}
               </DemoBlock>
             </div>
           ),

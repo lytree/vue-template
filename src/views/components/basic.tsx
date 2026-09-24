@@ -1,8 +1,9 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import {
   ElButton,
   ElButtonGroup,
   ElCol,
+  ElCollapseTransition,
   ElConfigProvider,
   ElContainer,
   ElAside,
@@ -30,6 +31,8 @@ import s from './basic.module.scss'
 export default defineComponent({
   name: 'ComponentsBasicPage',
   setup() {
+    const collapseOpen = ref(true)
+
     return () => (
       <PageContainer
         title="基础组件"
@@ -297,6 +300,26 @@ export default defineComponent({
                       <ElButton>按钮</ElButton>
                     </div>
                   </ElConfigProvider>
+                </div>
+              </DemoBlock>
+
+              <DemoBlock
+                title="ElCollapseTransition"
+                desc="折叠过渡容器：基于 height 做展开 / 收起动画，直接包裹需要过渡的元素，常用于手风琴、可折叠面板。"
+                block
+              >
+                <div class={s.collapseWrap}>
+                  <ElButton onClick={() => (collapseOpen.value = !collapseOpen.value)}>
+                    {collapseOpen.value ? '收起' : '展开'}
+                  </ElButton>
+                  <ElCollapseTransition>
+                    {collapseOpen.value ? (
+                      <div class={s.collapsePanel}>
+                        这段内容由 ElCollapseTransition 包裹 —— 展开与收起都带有平滑的 height
+                        过渡动画，无需手写 transition CSS。
+                      </div>
+                    ) : null}
+                  </ElCollapseTransition>
                 </div>
               </DemoBlock>
             </div>
