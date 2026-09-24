@@ -7,7 +7,7 @@
  *
  * 用法对照：
  *   import { compose, cx, mergeProps, responsive } from '@/styles/compose'
- *   import { sprinkles } from '@/styles/utility.css'
+ *   import { sprinkles } from '@/styles/utility'
  *
  *   const wrapper = compose(
  *     sprinkles({ p: '4', rounded: 'lg' }),     // ← vanilla-extract class
@@ -110,13 +110,13 @@ export function responsive(
 /**
  * 动态 CSS 变量 key —— 从 utility.css.ts 导入（同源同构）。
  */
-import { dynamicVarNames } from './utility.css'
+import { dynamicVarNames } from './utility'
 
 /**
  * `applyDynamic(values)` —— 运行时注入 CSS 变量。
  *
  * 用法：
- *   import { dynColorPrimary, dynBgPrimary } from '@/styles/utility.css'
+ *   import { dynColorPrimary, dynBgPrimary } from '@/styles/utility'
  *   import { applyDynamic } from '@/styles/compose'
  *
  *   <div

@@ -14,7 +14,7 @@ import {
   ElSwitch,
 } from 'element-plus'
 import PageContainer from '@/components/PageContainer'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 import s from './basic.module.scss'
 
 interface FormModel {

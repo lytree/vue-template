@@ -1,6 +1,6 @@
 /** 页面外壳：统一标题 / 描述 / 右上角操作区的间距与排版 */
 import { defineComponent } from 'vue'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 
 export default defineComponent({
   name: 'PageContainer',

@@ -26,7 +26,7 @@ const fakeClass = next()
 // 预生成 32 个 className（避免每个 it() 调用都生成新的）
 const fakeClasses = Array.from({ length: 64 }, () => next())
 
-vi.mock('@/styles/utility.css', () => {
+vi.mock('@/styles/utility', () => {
   const cardSize = {
     sm: fakeClasses[0],
     md: fakeClasses[1],
@@ -150,7 +150,7 @@ vi.mock('@/styles/utility.css', () => {
 
 // 现在 import（必须放在 mock 之后）
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const utility = await import('@/styles/utility.css')
+const utility = await import('@/styles/utility')
 
 describe('utility.css.ts — 主题系统导出', () => {
   it('exports themeContract（8 个主题 token key）', () => {

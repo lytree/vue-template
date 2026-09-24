@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 import s from './DemoBlock.module.scss'
 
 /**

@@ -25,7 +25,7 @@ import {
   setTheme as setThemeImpl,
   type ThemeAnimationName,
 } from '@/styles/useTheme'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 import { cx } from '@/styles/compose'
 import type { ThemeName } from '@/styles/useTheme'
 

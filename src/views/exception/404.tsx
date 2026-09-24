@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElButton } from 'element-plus'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 import s from './404.module.scss'
 
 export default defineComponent({

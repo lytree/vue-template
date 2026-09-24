@@ -7,7 +7,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 // Mock utility.css.ts 暴露 dynamicVarNames
-vi.mock('@/styles/utility.css', () => ({
+vi.mock('@/styles/utility', () => ({
   dynamicVarNames: {
     color: '--utility-color',
     bg: '--utility-background-color',

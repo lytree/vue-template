@@ -26,7 +26,7 @@ import { ArrowDown, Setting } from '@element-plus/icons-vue'
 
 import PageContainer from '@/components/PageContainer'
 import DemoBlock from '@/components/DemoBlock'
-import * as u from '@/styles/utility.css'
+import * as u from '@/styles/utility'
 import s from './navigation.module.scss'
 
 const ANCHOR_SECTIONS = ['锚点一', '锚点二', '锚点三']

@@ -13,7 +13,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 // Mock utility.css.ts（vanilla-extract 不能在 vitest 里跑）
-vi.mock('@/styles/utility.css', () => ({
+vi.mock('@/styles/utility', () => ({
   // 兼容垫片
   appCard: '_fake_appCard_',
   p5: '_fake_p5_',
@@ -85,7 +85,7 @@ vi.mock('@/styles/utility.css', () => ({
 describe('主题动画演示页所需的 utility className 完整性', () => {
   // 防止 utility.css.ts 重构时误删演示页依赖的关键 className
   it('8 套整页动画 utility className 都存在', async () => {
-    const utility = await import('@/styles/utility.css')
+    const utility = await import('@/styles/utility')
     expect(typeof utility.themeSwitchBlur).toBe('string')
     expect(typeof utility.themeSwitchExpand).toBe('string')
     expect(typeof utility.themeSwitchScale).toBe('string')
@@ -97,7 +97,7 @@ describe('主题动画演示页所需的 utility className 完整性', () => {
   })
 
   it('themeAnimations 对象含 8 个 key（与 README §4.2 章节对齐）', async () => {
-    const utility = await import('@/styles/utility.css')
+    const utility = await import('@/styles/utility')
     expect(Object.keys(utility.themeAnimations).sort()).toEqual([
       'blur',
       'expand',
@@ -111,18 +111,18 @@ describe('主题动画演示页所需的 utility className 完整性', () => {
   })
 
   it('Sun/Moon 切换按钮用 themeIconRotate', async () => {
-    const utility = await import('@/styles/utility.css')
+    const utility = await import('@/styles/utility')
     expect(typeof utility.themeIconRotate).toBe('string')
   })
 
   it('主题感知 utility className（themeCard / themePrimaryBtn）', async () => {
-    const utility = await import('@/styles/utility.css')
+    const utility = await import('@/styles/utility')
     expect(typeof utility.themeCard).toBe('string')
     expect(typeof utility.themePrimaryBtn).toBe('string')
   })
 
   it('overlay recipe 调用返回 string', async () => {
-    const utility = await import('@/styles/utility.css')
+    const utility = await import('@/styles/utility')
     expect(typeof utility.overlay({ tone: 'primary', size: 'sm' })).toBe('string')
   })
 })
